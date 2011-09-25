@@ -1,6 +1,6 @@
 <?php
 
-$file = "Valle Vista.kml";
+$file = "my_files/territory.kml";
 $xml = simplexml_load_file($file);
 /*$folders = $xml->xpath(
 	//"//kml:Document/kml:Folder/kml:Folder/kml:Folder/kml:name/..|".

@@ -10,8 +10,8 @@
 	<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
 	
 	<link rel="stylesheet" href="jquery-ui.css" type="text/css" media="all" />
-	<script src="jquery.min.js"></script>
-	<script src="jquery-ui.min.js"></script>
+	<script src="jquery/jquery.min.js"></script>
+	<script src="jquery/jquery-ui.min.js"></script>
 	
     <style type="text/css">
 		html, body {
@@ -204,7 +204,7 @@
   </head>
   <body>
 	<input type="hidden" id="mapId" value="<?php echo $_REQUEST['map']; ?>" />
-	<img id="card" src="territory_card.png" />
+	<img id="card" src="my_files/card.png" />
 	<table id="cardLabel" style="position: absolute;" border="0">
 		<tr>
 			<td style="width: 1%;"></td>
@@ -286,6 +286,6 @@
 	</table>
 	<br style="line-height: 4px;" />
 	<div id="map" class="smallmap" style="border: none;"></div>
-	<img id="north" src="n2.png" />
+	<img id="north" src="img/n.png" />
   </body>
 </html>
