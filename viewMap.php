@@ -1,3 +1,8 @@
+<?php
+	$_REQUEST['map'] = 			(!empty($_REQUEST['map']) ? $_REQUEST['map'] : "1");
+	$_REQUEST['congregation'] = (!empty($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "Valle Vista");
+	$_REQUEST['locality'] = 	(!empty($_REQUEST['locality']) ? $_REQUEST['locality'] : "Residential");
+?>
 <!DOCTYPE html>
 <html>
   <head>
@@ -143,7 +148,7 @@
                 projection: map.displayProjection,
                 strategies: [new OpenLayers.Strategy.Fixed()],
                 protocol: new OpenLayers.Protocol.HTTP({
-                    url: "http://localhost/territory/kmlFolder.php?map=" + $('#mapId').val() + (mini ? '&mini' : ''),
+                    url: "kmlFolder.php?map=" + $('#mapId').val() + (mini ? '&mini' : '') + '&locality=' + $('#locality').val() ,
                     format: new OpenLayers.Format.KML({
                         extractStyles: true,
                         extractAttributes: true
@@ -204,12 +209,15 @@
   </head>
   <body>
 	<input type="hidden" id="mapId" value="<?php echo $_REQUEST['map']; ?>" />
+	<input type="hidden" id="locality" value="<?php echo $_REQUEST['locality']; ?>" />
+	<input type="hidden" id="congregation" value="<?php echo $_REQUEST['congregation']; ?>" />
+	
 	<img id="card" src="my_files/card.png" />
 	<table id="cardLabel" style="position: absolute;" border="0">
 		<tr>
 			<td style="width: 1%;"></td>
 			<td style="width: 10%;"></td>
-			<td style="width: 35%;">Valle Vista Residential</td>
+			<td style="width: 35%;"><?php echo $_REQUEST['congregation'] . ' ' . $_REQUEST['locality']; ?></td>
 			<td style="width: 1%;"></td>
 			<td style="width: 10%;"></td>
 			<td style="width: 12%;"><?php echo $_REQUEST['map']; ?></td>

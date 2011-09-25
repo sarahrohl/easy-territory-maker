@@ -15,9 +15,9 @@ die;*/
 $displayMap = '';
 foreach($xml as $doc) {
 	foreach($doc as $nodes) {
-		if ($nodes->name == 'Residiential') {
-			foreach($nodes as $folders) {
-				foreach($folders as $map) {
+		if ($nodes->name == $_REQUEST['locality']) {
+			foreach($nodes as $map) {
+				
 					if ($map->name == $_REQUEST['map']) {
 						if (!empty($map->styleUrl)) {
 							$map->styleUrl = '#standardStyle';
@@ -31,7 +31,7 @@ foreach($xml as $doc) {
 						$displayMap = ($map->asXML());
 						
 					}
-				}
+				
 			}
 		}
 	}
@@ -40,7 +40,7 @@ header ("Content-Type:text/xml");
 echo '
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
 	<Document>
-		<name>Valle Vista</name>
+		<name>'.$_REQUEST['congregation'].'</name>
 		<open>1</open>
 		<Style id="standardStyle">
 		<LineStyle>
