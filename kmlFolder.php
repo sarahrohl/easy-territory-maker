@@ -1,8 +1,8 @@
 <?php
 
-$file = "kmlFiles/kmlFile.kml";
+$file = "Valle Vista.kml";
 $xml = simplexml_load_file($file);
-$folders = $xml->xpath(
+/*$folders = $xml->xpath(
 	//"//kml:Document/kml:Folder/kml:Folder/kml:Folder/kml:name/..|".
 	"//kml:Document/kml:Folder/kml:Folder/kml:Folder/kml:Placemark/kml:name/.."	
 );
@@ -11,7 +11,7 @@ foreach($folders as $folder) {
 	//print_r(count($folder->xpath("//kml:Placemark")))."<br />";
 }
 print_r($folders);
-die;
+die;*/
 $displayMap = '';
 foreach($xml as $doc) {
 	foreach($doc as $nodes) {
@@ -44,7 +44,7 @@ echo '
 		<open>1</open>
 		<Style id="standardStyle">
 		<LineStyle>
-			<color>660000ff</color>
+			<color>'.(isset($_REQUEST['mini']) ? '990000ff' : '4000ff00').'</color>
 			<width>5</width>
 		</LineStyle>
 		</Style>
