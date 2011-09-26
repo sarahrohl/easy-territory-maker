@@ -44,7 +44,13 @@ echo '
 		<open>1</open>
 		<Style id="standardStyle">
 		<LineStyle>
-			<color>'.(isset($_REQUEST['mini']) ? '990000ff' : '4000ff00').'</color>
+			<color>'.(isset($_REQUEST['mini']) ? 
+					'990000ff' : 
+					($_REQUEST['locality'] == 'Apartment' ? 
+						'990000ff' : 
+						'4000ff00'
+				)
+			).'</color>
 			<width>5</width>
 		</LineStyle>
 		</Style>

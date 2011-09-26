@@ -127,9 +127,14 @@
             };
             map = new OpenLayers.Map($(this).attr('id'), options);
             var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap");
+			
             var gmap = new OpenLayers.Layer.Google("Google", {
+				sphericalMercator: true
+			});
+			
+			var ghyb = new OpenLayers.Layer.Google("Google Hybrid",{
 				sphericalMercator: true,
-				
+				type: G_HYBRID_MAP
 			});
 			
 			var y = new OpenLayers.Layer.Yahoo("Yahoo Street", {
@@ -162,7 +167,11 @@
 					
 					toggleCredits();
 					
-					me.find('div.baseLayersDiv input[value="Bing"]').next().click();
+					if ($('#locality').val() == "Apartment") {
+						me.find('div.baseLayersDiv input[value="Google Hybrid"]').next().click();
+					} else {
+						me.find('div.baseLayersDiv input[value="Bing"]').next().click();
+					}
 				});
 			} else {
 				territory.events.register("loadend", territory, function (e) {
@@ -180,7 +189,7 @@
 				});
 			}
 			
-            map.addLayers([mapnik, gmap, y, bing, wms, territory]);
+            map.addLayers([mapnik, gmap, ghyb, y, bing, wms, territory]);
 
             select = new OpenLayers.Control.SelectFeature(territory);
   
@@ -233,7 +242,11 @@
 			<td style="font-size: 14px;" valign="top" colspan="2">
 				<h3>Directions</h3>
 				<ul>
+					<?php if ($_REQUEST['locality'] == "Apartment") { ?>
+					<li>Work buildings highlighted in <span style="color: red;">red</span> on back.</li>	
+					<?php } else { ?>
 					<li>Work both sides of street highlighted in <span style="color: green;">green</span> on back.</li>
+					<?php }?>
 					<li>Keep track of do not calls on front.</li>
 				</ul>
 				<h3>Do Not Calls</h3>
