@@ -11,9 +11,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAjpkAC9ePGem0lIq5XcMiuhR_wWLPFku8Ix9i2SXYRVK3e45q1BQUd_beF8dtzKET_EteAjPdGDwqpQ'></script>
-	<script src="http://ecn.dev.virtualearth.net/mapcontrol/mapcontrol.ashx?v=6.2&amp;mkt=en-us"></script>
-	<script src="http://api.maps.yahoo.com/ajaxymap?v=3.0&appid=euzuro-openlayers"></script>
-	
 	<link rel="stylesheet" href="jquery-ui.css" type="text/css" media="all" />
 	<script src="jquery/jquery.min.js"></script>
 	<script src="jquery/jquery-ui.min.js"></script>
@@ -137,14 +134,8 @@
 				type: G_HYBRID_MAP
 			});
 			
-			var y = new OpenLayers.Layer.Yahoo("Yahoo Street", {
-				sphericalMercator: true
-			});
-			
-			
-			var bing = new OpenLayers.Layer.VirtualEarth("Bing", {
-                sphericalMercator: true,
-				type: VEMapStyle.Shaded
+			var bing = new OpenLayers.Layer.Bing({
+		                sphericalMercator: true
             });
 			
 			var wms = new OpenLayers.Layer.WMS("World Map");
@@ -176,7 +167,7 @@
 			} else {
 				territory.events.register("loadend", territory, function (e) {
 					map.zoomToExtent(territory.getDataExtent());
-					map.zoomTo(13);
+					map.zoomTo(14);
 					map.updateSize();
 					
 					toggleCredits();
@@ -189,7 +180,7 @@
 				});
 			}
 			
-            map.addLayers([mapnik, gmap, ghyb, y, bing, wms, territory]);
+            map.addLayers([mapnik, gmap, ghyb, bing, wms, territory]);
 
             select = new OpenLayers.Control.SelectFeature(territory);
   
