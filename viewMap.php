@@ -1,7 +1,9 @@
 <?php
-	$_REQUEST['map'] = 			(!empty($_REQUEST['map']) ? $_REQUEST['map'] : "1");
-	$_REQUEST['congregation'] = (!empty($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "Valle Vista");
-	$_REQUEST['locality'] = 	(!empty($_REQUEST['locality']) ? $_REQUEST['locality'] : "Residential");
+	$_REQUEST = array_merge(array(
+		"map" => "1",
+		"congregation" => "Valle Vista",
+		"locality" => "Residential"
+	), $_REQUEST);
 ?>
 <!DOCTYPE html>
 <html>
@@ -9,11 +11,12 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title></title>
+    <title>Map <?php echo $_REQUEST['map'] ?></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAjpkAC9ePGem0lIq5XcMiuhR_wWLPFku8Ix9i2SXYRVK3e45q1BQUd_beF8dtzKET_EteAjPdGDwqpQ'></script>
-	<link rel="stylesheet" href="jquery-ui.css" type="text/css" media="all" />
-	<script src="jquery/jquery.min.js"></script>
-	<script src="jquery/jquery-ui.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
+    <script src="http://jquery-ui.googlecode.com/svn/tags/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
+    <link href="http://jquery-ui.googlecode.com/svn/tags/latest/themes/smoothness/jquery.ui.all.css" type="text/css" rel="Stylesheet" />
 	
     <style type="text/css">
 		html, body {
