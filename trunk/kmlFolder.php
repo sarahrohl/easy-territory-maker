@@ -1,32 +1,8 @@
 <?php
 
-$xml = simplexml_load_file('my_files/territory.kml');
-$ns = $xml->getDocNamespaces();
-if(isset($ns[""])){
- 	$xml->registerXPathNamespace('kml', 'http://earth.google.com/kml/2.2');
-}
-$folders = $xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $_REQUEST['locality'] . "']/kml:Folder[kml:name/text()='" . $_REQUEST['map'] . "']");
-$placemarks = $xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $_REQUEST['locality'] . "']/kml:Placemark[kml:name/text()='" . $_REQUEST['map'] . "']");
+include_once('lib/etm.php');
 
-$displayMap = '';
-
-//list folders if is set
-if (empty($folders) == false) {
-	foreach($folders as $folder) {
-		foreach($folder->Placemark as $mark) {
-			$placemark->styleUrl = '#standardStyle';
-		}
-		$displayMap = $folder->asXML();
-	}
-}
-
-//list placemarks if is set
-if (empty($placemarks) == false) {
-	foreach($placemarks as $placemark) {
-		$placemark->styleUrl = '#standardStyle';
-		$displayMap = $placemark->asXML();
-	}
-}
+$etm = new etm();
 
 header ("Content-Type:text/xml"); 
 echo '
@@ -46,6 +22,6 @@ echo '
 			<width>5</width>
 		</LineStyle>
 		</Style>
-		'.$displayMap.'
+		'.$etm->getMap($_REQUEST['locality'], $_REQUEST['map']).'
 	</Document>
 </kml>';
