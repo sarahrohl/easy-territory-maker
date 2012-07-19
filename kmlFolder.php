@@ -1,41 +1,33 @@
 <?php
 
-$file = "my_files/territory.kml";
-$xml = simplexml_load_file($file);
-/*$folders = $xml->xpath(
-	//"//kml:Document/kml:Folder/kml:Folder/kml:Folder/kml:name/..|".
-	"//kml:Document/kml:Folder/kml:Folder/kml:Folder/kml:Placemark/kml:name/.."	
-);
-
-foreach($folders as $folder) {
-	//print_r(count($folder->xpath("//kml:Placemark")))."<br />";
+$xml = simplexml_load_file('my_files/territory.kml');
+$ns = $xml->getDocNamespaces();
+if(isset($ns[""])){
+ 	$xml->registerXPathNamespace('kml', 'http://earth.google.com/kml/2.2');
 }
-print_r($folders);
-die;*/
+$folders = $xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $_REQUEST['locality'] . "']/kml:Folder[kml:name/text()='" . $_REQUEST['map'] . "']");
+$placemarks = $xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $_REQUEST['locality'] . "']/kml:Placemark[kml:name/text()='" . $_REQUEST['map'] . "']");
+
 $displayMap = '';
-foreach($xml as $doc) {
-	foreach($doc as $nodes) {
-		if ($nodes->name == $_REQUEST['locality']) {
-			foreach($nodes as $map) {
-				
-					if ($map->name == $_REQUEST['map']) {
-						if (!empty($map->styleUrl)) {
-							$map->styleUrl = '#standardStyle';
-						}
-						foreach($map as $layer) {
-							if (!empty($layer->styleUrl)) {
-								$layer->styleUrl = '#standardStyle';
-							}
-						}
-						
-						$displayMap = ($map->asXML());
-						
-					}
-				
-			}
+
+//list folders if is set
+if (empty($folders) == false) {
+	foreach($folders as $folder) {
+		foreach($folder->Placemark as $mark) {
+			$placemark->styleUrl = '#standardStyle';
 		}
+		$displayMap = $folder->asXML();
 	}
 }
+
+//list placemarks if is set
+if (empty($placemarks) == false) {
+	foreach($placemarks as $placemark) {
+		$placemark->styleUrl = '#standardStyle';
+		$displayMap = $placemark->asXML();
+	}
+}
+
 header ("Content-Type:text/xml"); 
 echo '
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
