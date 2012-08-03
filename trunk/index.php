@@ -8,27 +8,29 @@
 	<link href="http://jquery-ui.googlecode.com/svn/tags/latest/themes/smoothness/jquery.ui.all.css" type="text/css" rel="Stylesheet" />
 	<script>
 		$(function() {
-			$('#maps').accordion({
-				autoHeight: false
-			});
+			$('#maps').tabs();
 		});
 	</script>
 </head>
-<div id="maps">
 <?php
 include_once('lib/etm.php');
 $etm = new etm();
 
-foreach($etm->all() as $locality) {
-	echo "<h2>" . $locality->name . "</h2>";
-	echo "<ul>";
+$tabs = "";
+$tabContents = "";
+foreach($etm->all() as $index => $locality) {
+	$tabs .= "<li><a href='#tab$index'>" . $locality->name . "</a></li>";
+
+	$tabContents .= "<div id='tab$index'><ul>";
 	foreach($locality as $map) {
 		if (!empty($map->name)) {
-			echo "<li><a href='viewMap.php?map=" . $map->name . "&locality=" . $locality->name . "'>" . $map->name . "</a></li>";
+			$tabContents .= "<li><a href='viewMap.php?map=" . $map->name . "&locality=" . $locality->name . "'>" . $map->name . "</a></li>";
 		}
 	}
-	echo "</ul>";
+	$tabContents .= "</ul></div>";
 }
 ?>
+<div id="maps">
+	<?php echo "<ul>" . $tabs . "</ul>" . $tabContents?>
 </div>
 </html>
