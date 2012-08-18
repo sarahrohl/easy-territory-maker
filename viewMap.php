@@ -77,9 +77,13 @@
 		function toggleControls() {
 			this.panZoomToggle = !this.panZoomToggle;
 			if (this.panZoomToggle) {
+				$('.maximizeDiv').hide();
 				$('.olControlPanZoom').hide();
+				$('.olControlZoom').hide();
 			} else {
+				$('.maximizeDiv').show();
 				$('.olControlPanZoom').show();
+				$('.olControlZoom').show();
 			}
 		}
 			
@@ -87,7 +91,6 @@
 			//Open Street Map
 			$('div.olControlAttribution:contains("Data CC-By-SA by")').hide();
 
-			$('.maximizeDiv').toggle();
 			//Google
 			$('div.olLayerGooglePoweredBy').hide();
 			$('div.olLayerGoogleCopyright').hide();
@@ -179,7 +182,7 @@
 					
 					setTimeout(function() {
 						$(document).dblclick();
-					}, 2000);
+					}, 1000);
 				});
 			}
 			
@@ -237,7 +240,9 @@
 				<h3>Directions</h3>
 				<ul>
 					<?php if ($_REQUEST['locality'] == "Apartment") { ?>
-					<li>Work buildings highlighted in <span style="color: red;">red</span> on back.</li>	
+					<li>Work buildings highlighted in <span style="color: red;">red</span> on back.</li>
+					<?php } else if ($_REQUEST['locality'] == "Business") { ?>
+					<li>Work sections highlighted in <span style="color: red;">red</span> on back.</li>
 					<?php } else { ?>
 					<li>Work both sides of street highlighted in <span style="color: green;">green</span> on back.</li>
 					<?php }?>
