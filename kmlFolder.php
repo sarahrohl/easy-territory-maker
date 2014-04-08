@@ -16,7 +16,7 @@ switch (!empty($_REQUEST['locality']) ? $_REQUEST['locality'] : 'Apartment') {
 		break;
 	default:
 		$borderColor = '4000ff00';
-		$fillColor = '00000000';
+		$fillColor = '4000ff00';
 		break;
 }
 
@@ -27,7 +27,7 @@ if (isset($_REQUEST['mini'])) {
 echo '
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
 	<Document>
-		<name>'.(isset($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "Valle Vista").'</name>
+		<name>'.(isset($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "").'</name>
 		<open>1</open>
 		<Style id="standardStyle">
 		<LineStyle>
@@ -38,6 +38,6 @@ echo '
 			<color>' . $fillColor . '</color>
 		</PolyStyle>
 		</Style>
-		'.$etm->getMap($_REQUEST['locality'], $_REQUEST['map']).'
+		'.$etm->getMap($_REQUEST['map'], $_REQUEST['locality']).'
 	</Document>
 </kml>';

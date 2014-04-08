@@ -21,31 +21,39 @@ class etm
 
 	function all()
 	{
-		return $this->xml->xpath("//kml:Document/kml:Folder");
+		return $this->xml->xpath("//kml:Document/kml:Folder | //kml:Document/kml:Placemark");
 	}
 
-	function folderLookup($locality, $map)
+	function folderLookup($map, $locality)
 	{
-		return $this->xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $locality . "']/kml:Folder[kml:name/text()='" . $map . "']");
+        if (empty($locality)) {
+            return $this->xml->xpath("//kml:Document/kml:Placemark[kml:name/text()='" . $map . "']");
+        } else {
+            return $this->xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $locality . "']/kml:Folder[kml:name/text()='" . $map . "']");
+        }
 	}
 
-	function placemarkLookup($locality, $map)
+	function placemarkLookup($map, $locality)
 	{
 		return $this->xml->xpath("//kml:Document/kml:Folder[kml:name/text()='" . $locality . "']/kml:Placemark[kml:name/text()='" . $map . "']");
 	}
 
-	function getMap($locality, $map)
+	function getMap($map, $locality)
 	{
 		$result = '';
-		$folders = $this->folderLookup($locality, $map);
-		$placemarks = $this->placemarkLookup($locality, $map);
+		$folders = $this->folderLookup($map, $locality);
+		$placemarks = $this->placemarkLookup($map, $locality);
 
 		//list folders if is set
 		if (empty($folders) == false) {
 			foreach($folders as $folder) {
-				foreach($folder->Placemark as $placemark) {
-					$placemark->styleUrl = '#standardStyle';
-				}
+                if (empty($folder->Placemark)) {
+                    $folder->styleUrl = '#standardStyle';
+                } else {
+                    foreach($folder->Placemark as $placemark) {
+                        $placemark->styleUrl = '#standardStyle';
+                    }
+                }
 				$result = $folder->asXML();
 			}
 		}

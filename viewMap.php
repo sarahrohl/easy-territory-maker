@@ -1,8 +1,8 @@
 <?php
 	$_REQUEST = array_merge(array(
 		"map" => "1",
-		"congregation" => "Valle Vista",
-		"locality" => "Residential"
+		"congregation" => "",
+		"locality" => ""
 	), $_REQUEST);
 ?>
 <!DOCTYPE html>
