@@ -2,13 +2,17 @@
 
 class etm
 {
+    public $string;
 	public $xml;
 	public $folders;
 	public $placemarks;
 
 	function __construct()
 	{
-		$this->xml = simplexml_load_file('my_files/territory.kml');
+        $dir = dirname(dirname(__FILE__));
+        chdir($dir);
+        $this->string = file_get_contents('my_files/territory.kml');
+		$this->xml = simplexml_load_string($this->string);
 		$ns = $this->xml->getDocNamespaces();
 		if(isset($ns[""])){
 			$this->xml->registerXPathNamespace('kml', 'http://earth.google.com/kml/2.2');

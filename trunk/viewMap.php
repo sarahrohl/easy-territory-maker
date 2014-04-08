@@ -13,10 +13,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Map <?php echo $_REQUEST['map'] ?></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.8.21/jquery-ui.min.js"></script>
-    <script src="http://jquery-ui.googlecode.com/svn/tags/latest/ui/minified/i18n/jquery-ui-i18n.min.js"></script>
-    <link href="http://jquery-ui.googlecode.com/svn/tags/latest/themes/smoothness/jquery.ui.all.css" type="text/css" rel="Stylesheet" />
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
+    <link href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	
     <style type="text/css">
 		html, body {
@@ -27,8 +27,8 @@
         .olPopup p { margin:0px; font-size: .9em;}
         .olPopup h2 { font-size:1.2em; }
     </style>
-    <script src="openlayers/OpenLayers.js"></script>
-    <script type="text/javascript">
+    <script src="bower_components/OpenLayers/OpenLayers.js"></script>
+    <script>
         var lat = 39.594966;
         var lon = -86.116333;
         var zoom = 12;

@@ -1,0 +1,25 @@
+{
+  "name": "easy territory maker",
+  "version": "0.0.2",
+  "description": "A territory and map maker for use with kml files from google earth",
+  "keywords": [
+    "territory",
+    "map",
+    "kml",
+    "earth",
+    "google"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "OpenLayers" : "http://openlayers.org/download/OpenLayers-2.12.zip",
+    "jquery" : "git://github.com/jquery/jquery.git",
+    "jquery-ui" : "git://github.com/components/jqueryui"
+  }
+}
