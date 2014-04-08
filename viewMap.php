@@ -15,6 +15,7 @@
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="lib/Map.js"></script>
     <script src="bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
     <link href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
 	
@@ -24,24 +25,48 @@
 			padding: 0;
 			margin: 0;
         }
-        .olPopup p { margin:0px; font-size: .9em;}
-        .olPopup h2 { font-size:1.2em; }
+        .olPopup p {
+            margin:0px; font-size: .9em;
+        }
+        .olPopup h2 {
+            font-size:1.2em;
+        }
+        #cardLabel table, #cardLabel table td {
+            border: 1px solid #C3C3C3;
+            border-collapse: collapse;
+        }
+        #cardLabel table th {
+            border: 1px solid #C3C3C3;
+            text-align: center;
+            font-weight: bold;
+        }
+        h3 {
+            margin: 0px;
+            padding: 0px;
+            width: 100%;
+        }
+        .olControlAttribution,
+        .olControlZoom,
+        .maximizeDiv {
+            display: none ! important;
+        }
+        .ui-resizable-handle {
+            background-image: none ! important;
+        }
     </style>
     <script src="bower_components/OpenLayers/OpenLayers.js"></script>
     <script>
-        var lat = 39.594966;
-        var lon = -86.116333;
-        var zoom = 12;
-        var select;
-		
 		$(function() {
-			var height = $(window).height();
-			var width = height * 1.6;
-			
-			$('#mapMini')
+			var height = $(window).height(),
+			    width = height * 1.6,
+                map = $('#map'),
+                mapMini = $('#mapMini'),
+                card = $('#card');
+
+			mapMini
 				.height(height * 0.5);
 							
-			$('#map')
+			map
 				.height(height)
 				.width(width)
 				.resizable({
@@ -49,7 +74,7 @@
 					alsoResize: '#card'
 				});
 				
-			$('#card')
+			card
 				.height(height)
 				.width(width)
 				.resizable({
@@ -62,42 +87,10 @@
 				.trigger('resize');
 			
 			resetLabels();
-			
-			$(document)
-				.dblclick(function() {
-					toggleControls();
-					toggleCredits();
-					return false;
-				});
-			
-			$('#map').makeMap();
-			$('#mapMini').makeMap(true);
-        });
-		
-		function toggleControls() {
-			this.panZoomToggle = !this.panZoomToggle;
-			if (this.panZoomToggle) {
-				$('.maximizeDiv').hide();
-				$('.olControlPanZoom').hide();
-				$('.olControlZoom').hide();
-			} else {
-				$('.maximizeDiv').show();
-				$('.olControlPanZoom').show();
-				$('.olControlZoom').show();
-			}
-		}
-			
-		function toggleCredits(skip) {
-			//Open Street Map
-			$('div.olControlAttribution:contains("Data CC-By-SA by")').hide();
 
-			//Google
-			$('div.olLayerGooglePoweredBy').hide();
-			$('div.olLayerGoogleCopyright').hide();
-			
-			//Bing
-			$('div.MSVE_LogoContainer,div.MSVE_Copyright').hide();
-		}
+            new Map(map);
+            new Map(mapMini, true);
+        });
 		
 		function resetLabels() {
 			height = $('#map').height();
@@ -118,100 +111,7 @@
         function onPopupClose(evt) {
             select.unselectAll();
         }
-		
-		$.fn.makeMap = function (mini) {
-			var me = $(this);
-			var map = this.map;
-			var options = {
-                projection: new OpenLayers.Projection("EPSG:900913"),
-                displayProjection: new OpenLayers.Projection("EPSG:4326"),
-                units: "m",
-				numZoomLevels: 20
-            };
-            map = new OpenLayers.Map($(this).attr('id'), options);
-            var mapnik = new OpenLayers.Layer.OSM("OpenStreetMap");
-			
-            var gmap = new OpenLayers.Layer.Google("Google", {
-				sphericalMercator: true
-			});
-			
-			var ghyb = new OpenLayers.Layer.Google("Google Hybrid",{
-				sphericalMercator: true,
-				type: G_HYBRID_MAP
-			});
-			
-			var bing = new OpenLayers.Layer.Bing({
-		                sphericalMercator: true
-            });
-			
-			var wms = new OpenLayers.Layer.WMS("World Map");
-			
-            var territory = new OpenLayers.Layer.Vector("KML", {
-                projection: map.displayProjection,
-                strategies: [new OpenLayers.Strategy.Fixed()],
-                protocol: new OpenLayers.Protocol.HTTP({
-                    url: "kmlFolder.php?map=" + $('#mapId').val() + (mini ? '&mini' : '') + '&locality=' + $('#locality').val() ,
-                    format: new OpenLayers.Format.KML({
-                        extractStyles: true,
-                        extractAttributes: true
-                    })
-                })
-            });
-			
-			if (!mini) {
-				territory.events.register("loadend", territory, function (e) {
-					map.zoomToExtent(territory.getDataExtent());
-					
-					toggleCredits();
-					
-					if ($('#locality').val() == "Apartment") {
-						me.find('div.baseLayersDiv input[value="Google Hybrid"]').next().click();
-					} else {
-						me.find('div.baseLayersDiv input[value="Bing"]').next().click();
-					}
-				});
-			} else {
-				territory.events.register("loadend", territory, function (e) {
-					map.zoomToExtent(territory.getDataExtent());
-					map.zoomTo(14);
-					map.updateSize();
-					
-					toggleCredits();
-					
-					me.find('div.baseLayersDiv input[value="Google"]').next().click();
-					
-					setTimeout(function() {
-						$(document).dblclick();
-					}, 1000);
-				});
-			}
-			
-            map.addLayers([mapnik, gmap, ghyb, bing, wms, territory]);
-
-            select = new OpenLayers.Control.SelectFeature(territory);
-  
-            map.addControl(select);
-			
-			var layerSwitch = new OpenLayers.Control.LayerSwitcher();
-            map.addControl(layerSwitch);
-		};
     </script>
-	<style>
-		#cardLabel table, #cardLabel table td {
-			border: 1px solid #C3C3C3;
-			border-collapse: collapse;
-		}
-		#cardLabel table th {
-			border: 1px solid #C3C3C3;
-			text-align: center;
-			font-weight: bold;
-		}
-		h3 {
-			margin: 0px;
-			padding: 0px;
-			width: 100%;
-		}
-	</style>
   </head>
   <body>
 	<input type="hidden" id="mapId" value="<?php echo $_REQUEST['map']; ?>" />
