@@ -45,6 +45,7 @@
             padding: 0px;
             width: 100%;
         }
+
         .olControlAttribution,
         .olControlZoom,
         .maximizeDiv {
