@@ -4,6 +4,10 @@
 		"congregation" => "",
 		"locality" => ""
 	), $_REQUEST);
+
+    if (!file_exists('my_files/card.png')) {
+        throw new Exception("It looks like you don't yet have the 'card.png' file in the 'my_files' folder.  Please scan a S-12-E or similar and place there to continue.  This is not a digitally distributed file, which is why this measure is in place.");
+    }
 ?><!DOCTYPE html>
 <html>
   <head>
