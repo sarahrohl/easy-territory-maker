@@ -55,7 +55,8 @@
         .olControlAttribution,
         .olControlZoom,
         .maximizeDiv,
-        .gmnoprint {
+        .gmnoprint,
+        .gm-style a {
             display: none ! important;
         }
         .ui-resizable-handle {
