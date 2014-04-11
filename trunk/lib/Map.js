@@ -51,7 +51,7 @@ var Map = (function(document, window, $) {
             });
         }
 
-        map.addLayers([mapnik, gmap, ghyb, bing, wms, territory]);
+        map.addLayers([gmap, mapnik, ghyb, bing, wms, territory]);
 
         select = new OpenLayers.Control.SelectFeature(territory);
 
