@@ -1,43 +1,52 @@
 <?php
+//set this to xml
+header ("Content-Type:text/xml");
 
-include_once('lib/etm.php');
+//set defaults in $_REQUEST
+$_REQUEST = array_merge(array(
+    "territory" => "1",
+    "congregation" => "",
+    "locality" => ""
+), $_REQUEST);
 
-$etm = new etm();
+//include and instantiate EasyTerritoryMaker
+include_once('lib/EasyTerritoryMaker.php');
+$etm = new EasyTerritoryMaker();
 
-header ("Content-Type:text/xml"); 
+//setup default colors
+$borderColor = '4000ff00';
+$fillColor = '4000ff00';
 
-$borderColor = '';
-$fillColor = '';
-
-switch (!empty($_REQUEST['locality']) ? $_REQUEST['locality'] : 'Apartment') {
-	case "Business":
-		$borderColor = '660000ff';
-		$fillColor = '660000ff';
-		break;
-	default:
-		$borderColor = '4000ff00';
-		$fillColor = '4000ff00';
-		break;
-}
-
+//override color if mini is used
 if (isset($_REQUEST['mini'])) {
 	$borderColor = '660000ff';
 }
 
-echo '
-<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+//get congregation and territory as strings
+$congregation = (isset($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "");
+$kml = $etm->getSingleKml(urldecode($_REQUEST['territory']), urldecode($_REQUEST['locality']));
+
+//write the xml
+echo <<<XML
+<kml
+    xmlns="http://www.opengis.net/kml/2.2"
+    xmlns:gx="http://www.google.com/kml/ext/2.2"
+    xmlns:kml="http://www.opengis.net/kml/2.2"
+    xmlns:atom="http://www.w3.org/2005/Atom">
 	<Document>
-		<name>'.(isset($_REQUEST['congregation']) ? $_REQUEST['congregation'] : "").'</name>
+		<name>$congregation</name>
 		<open>1</open>
 		<Style id="standardStyle">
-		<LineStyle>
-			<color>'.$borderColor.'</color>
-			<width>5</width>
-		</LineStyle>
-		<PolyStyle>
-			<color>' . $fillColor . '</color>
-		</PolyStyle>
+            <LineStyle>
+                <color>$borderColor</color>
+                <width>5</width>
+            </LineStyle>
+            <PolyStyle>
+                <color>$fillColor</color>
+            </PolyStyle>
 		</Style>
-		'.$etm->getMap($_REQUEST['map'], $_REQUEST['locality']).'
+		$kml
 	</Document>
-</kml>';
+</kml>
+XML
+;

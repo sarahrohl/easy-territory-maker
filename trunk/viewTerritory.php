@@ -1,17 +1,16 @@
 <?php
 	$_REQUEST = array_merge(array(
-		"map" => "1",
+		"territory" => "1",
 		"congregation" => "",
 		"locality" => ""
 	), $_REQUEST);
-?>
-<!DOCTYPE html>
+?><!DOCTYPE html>
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Map <?php echo $_REQUEST['map'] ?></title>
+    <title>Territory <?php echo $_REQUEST['territory'] ?></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
@@ -26,7 +25,8 @@
 			margin: 0;
         }
         .olPopup p {
-            margin:0px; font-size: .9em;
+            margin:0px;
+            font-size: .9em;
         }
         .olPopup h2 {
             font-size:1.2em;
@@ -62,6 +62,8 @@
 			    width = height * 1.6,
                 map = $('#map'),
                 mapMini = $('#mapMini'),
+                territoryName = $('#mapId').val(),
+                locality = $('#locality').val(),
                 card = $('#card');
 
 			mapMini
@@ -89,24 +91,30 @@
 			
 			resetLabels();
 
-            new Map(map);
-            new Map(mapMini, true);
+            new Map(map, territoryName, locality);
+            new Map(mapMini, territoryName, locality, true);
         });
 		
 		function resetLabels() {
-			height = $('#map').height();
-			width = height * 1.6;
+            var map = $('#map'),
+                card = $('#card'),
+                mapPosition = map.position(),
+                cardPosition = card.position(),
+			    height = map.height(),
+			    width = height * 1.6;
 			
-			$('#cardLabel')
-				.width(width * 1)
-				.css('left', 1)
-				.css('top', ($('#card').position().top + (width * 0.07)) + 'px')
-				.css('font-size', (width * 0.04) + 'px');
+			$('#cardLabel').css({
+                width: width + 'px',
+                left: '1px',
+                top: (cardPosition.top + (width * 0.07)) + 'px',
+                fontSize: (width * 0.04) + 'px'
+            });
 			
-			$('#north')
-				.css('position', 'absolute')
-				.css('top', $('#map').position().top + 120)
-				.css('left', $('#map').position().left + 10);
+			$('#north').css({
+                position: 'absolute',
+                top: (mapPosition.top + 120) + 'px',
+                left: (mapPosition.left + 10) + 'px'
+            });
 		}
 		
         function onPopupClose(evt) {
@@ -115,7 +123,7 @@
     </script>
   </head>
   <body>
-	<input type="hidden" id="mapId" value="<?php echo $_REQUEST['map']; ?>" />
+	<input type="hidden" id="mapId" value="<?php echo $_REQUEST['territory']; ?>" />
 	<input type="hidden" id="locality" value="<?php echo $_REQUEST['locality']; ?>" />
 	<input type="hidden" id="congregation" value="<?php echo $_REQUEST['congregation']; ?>" />
 	
@@ -127,7 +135,7 @@
 			<td style="width: 35%;"><?php echo $_REQUEST['congregation'] . ' ' . $_REQUEST['locality']; ?></td>
 			<td style="width: 1%;"></td>
 			<td style="width: 10%;"></td>
-			<td style="width: 12%;"><?php echo $_REQUEST['map']; ?></td>
+			<td style="width: 12%;"><?php echo $_REQUEST['territory']; ?></td>
 			<td style="width: 1%;"></td>
 		</tr>
 		<tr>
@@ -137,20 +145,14 @@
 				<div id="mapMini" style="border: none;"></div>
 			</td>
 			<td></td>
-			<td style="font-size: 14px;" valign="top" colspan="2">
+			<td style="font-size: 14px;" colspan="2">
 				<h3>Directions</h3>
 				<ul>
-					<?php if ($_REQUEST['locality'] == "Apartment") { ?>
-					<li>Work buildings highlighted in <span style="color: red;">red</span> on back.</li>
-					<?php } else if ($_REQUEST['locality'] == "Business") { ?>
-					<li>Work sections highlighted in <span style="color: red;">red</span> on back.</li>
-					<?php } else { ?>
-					<li>Work both sides of street highlighted in <span style="color: green;">green</span> on back.</li>
-					<?php }?>
+					<li>Work area highlighted in <span style="color: green;">green</span> on back.</li>
 					<li>Keep track of do not calls on front.</li>
 				</ul>
 				<h3>Do Not Calls</h3>
-				<table style="width: 100%;" border="1" cellspacing="0">
+				<table style="width: 100%;" border="1">
 					<tr>
 						<th>Name</th>
 						<th>Address</th>
