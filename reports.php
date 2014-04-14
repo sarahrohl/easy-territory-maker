@@ -14,6 +14,9 @@
 	include_once('lib/EasyTerritoryMaker.php');
 	$etm = new EasyTerritoryMaker();
 	$list = '';
+    $territoryAssignmentRecords = '';
+    $territoryAssignmentRecordsTick = 0;
+    $territoryAssignmentRecordsIndex = 0;
 	$index = 0;
 
 	$overview = '';
@@ -52,6 +55,17 @@
 	                    </tr>";
 
 		                $index++;
+
+                        //write the territory assignment records
+                        if ($territoryAssignmentRecordsTick == 0) {
+                            $territoryAssignmentRecordsIndex++;
+                            $territoryAssignmentRecordsTick++;
+                            $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set $territoryAssignmentRecordsIndex</a></li>";
+                        } else if ($territoryAssignmentRecordsTick >= 5) {
+                            $territoryAssignmentRecordsTick = 0;
+                        } else {
+                            $territoryAssignmentRecordsTick++;
+                        }
 		            }
 		        }
 		    }
@@ -60,6 +74,7 @@
 		    else {
 			    $status = $etm->getSingleStatus($localityName . '');
 
+                //write the standard list of territories
 			    $list .= "<tr>
 					<td id='territory$index' class='territory' data-index='$index'>
 			            <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index'>$localityName</a>
@@ -123,8 +138,9 @@
 	<div id="tabs">
 		<ul>
 			<li><a href="#list">List</a></li>
-			<li><a href="#priority">Need Worked</a></li>
+			<li><a href="#priority">Need Reworked</a></li>
 			<li><a href="#idealReturnDates">Ideal Return Dates</a></li>
+			<li><a href="#territoryAssignmentRecords">Territory Assignment Records</a></li>
 		</ul>
 		<div id="list">
 			<table style="min-width: 50%;">
@@ -154,6 +170,11 @@
 				<?php echo $idealReturnDates;?>
 			</table>
 		</div>
+        <div id="territoryAssignmentRecords">
+            <ul>
+                <?php echo $territoryAssignmentRecords; ?>
+            </ul>
+        </div>
 	</div>
 	<div class="ui-button ui-widget" style="position: absolute; right: 25px; top: 18px;">
 		<a href="#" onmousedown="window.open('https://docs.google.com/spreadsheets/d/<?php echo $key; ?>');">Open Activity Spreadsheet</a>
