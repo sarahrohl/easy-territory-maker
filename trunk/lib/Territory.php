@@ -13,7 +13,7 @@ class Territory {
     public $in;
 	public $idealReturnDate;
 
-    public function __construct($row)
+    public function __construct($row = null)
     {
         $this->territory = $row->territory . '';
         $this->publisher = $row->publisher . '';
