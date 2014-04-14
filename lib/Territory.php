@@ -11,16 +11,25 @@ class Territory {
     public $publisher;
     public $out;
     public $in;
+	public $idealReturnDate;
 
     public function __construct($row)
     {
         $this->territory = $row->territory . '';
         $this->publisher = $row->publisher . '';
-        $this->out = strtotime($row->out . '');
-        $in = $row->in . '';
+
+	    //out
+	    $out = $row->out . '';
+        $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
+
+	    //ideal return date
+	    $this->idealReturnDate = strtotime(date("Y-m-d", $this->out) . " +4 month");
+
+	    //in
+	    $in = $row->in . '';
 
         if (!empty($in)) {
-            $this->in = strtotime($in);
+            $this->in = DateTime::createFromFormat('!d/m/Y', $in)->getTimestamp();
         }
     }
 } 

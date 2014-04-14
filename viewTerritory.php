@@ -157,7 +157,7 @@
             <td style="font-size: 14px;" colspan="2">
                 <h3>Directions</h3>
                 <ul>
-                    <li>Work <span style="font-weight: bold;">entire highlighted area </span> in <span style="color: green;">green</span> on back.</li>
+                    <li>Work <span style="font-weight: bold;">houses, apartments, and businesses</span> that are encompassed within the <span style="color: green;">green highlighted area</span>.</li>
                     <li>Keep track of do not calls on front.</li>
                 </ul>
                 <h3>Do Not Calls</h3>
