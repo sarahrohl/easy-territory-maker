@@ -65,6 +65,7 @@ class EasyTerritoryMaker
                 $this->territories[$territoryName]->add($territory);
 
                 if (empty($territory->in)) {
+	                $this->territories[$territoryName]->out = true;
                     $this->territoriesOut[$territoryName] = $territory;
                 }
             }
@@ -138,4 +139,62 @@ XPATH
 	}
 
 
+	/**
+	 * @param $territory
+	 * @return null|TerritoryCollection
+	 *
+	 */
+	function getSingleStatus($territory)
+	{
+		$activity = null;
+		if (array_key_exists($territory, $this->territories)) {
+			$activity = $this->territories[$territory];
+		}
+
+		$status = '<span style="color: green;">In</span>';;
+		if ($activity != null) {
+			if ($activity->out) {
+				$expected = date("m/d/Y", $activity->mostRecent()->idealReturnDate);
+				$status = "<span style='color: blue;'>Out - Expected $expected</span>";
+			}
+		}
+
+		return $status;
+	}
+
+	public function sort()
+	{
+		usort($this->territoriesOut, function (Territory $a, Territory $b) {
+			return $b->out - $a->out;
+		});
+	}
+
+	/**
+	 * @return Territory[]
+	 */
+	function getIdealReturnDates()
+	{
+		$this->sort();
+		return $this->territoriesOut;
+	}
+
+	/**
+	 * @return Territory[]
+	 */
+	public function getPriority()
+	{
+		$territories = array();
+		foreach ($this->territories as $territoryCollection) {
+			$territory = $territoryCollection->mostRecent();
+			if (!empty($territory->in)) {
+				$territories[$territory->territory] = $territory;
+			}
+		}
+
+		usort($territories, function (Territory $a, Territory $b) {
+			return $a->in - $b->in;
+		});
+
+		return $territories;
+	}
 }

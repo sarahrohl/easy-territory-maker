@@ -6,6 +6,23 @@ var Map = (function(document, window, $) {
                 units: "m",
                 numZoomLevels: 20
             },
+	        kmlStyle = new OpenLayers.StyleMap({
+			        "default": new OpenLayers.Style({
+				        strokeColor: "#FFFF00",
+				        strokeWidth:25,
+				        strokeOpacity:.30,
+				        fillColor:"#FFFF00",
+				        fillOpacity:.2,
+				        label : "${name}"
+			        }),
+			        "select": new OpenLayers.Style({
+				        strokeColor: "#B0FFFF",
+				        strokeWidth:3,
+				        strokeOpacity:1,
+				        fillColor:"#B0FFFF",
+				        fillOpacity: 0.4
+			        })
+		        }),
             map = this.map = new OpenLayers.Map(me.attr('id'), options),
             mapnik = new OpenLayers.Layer.OSM("OpenStreetMap"),
             gmap = new OpenLayers.Layer.Google("Google", {
@@ -20,10 +37,14 @@ var Map = (function(document, window, $) {
             }),
             wms = new OpenLayers.Layer.WMS("World Map"),
             territory = new OpenLayers.Layer.Vector("KML", {
+	            styleMap: (territoryName ? '' : kmlStyle),
                 projection: map.displayProjection,
                 strategies: [new OpenLayers.Strategy.Fixed()],
                 protocol: new OpenLayers.Protocol.HTTP({
-                    url: "kmlFolder.php?territory=" + territoryName + (mini ? '&mini' : '') + '&locality=' + locality ,
+                    url: (territoryName
+	                    ? "kmlFolder.php?territory=" + territoryName + (mini ? '&mini' : '') + '&locality=' + locality
+	                    : "my_files/territory.kml"
+                    ),
                     format: new OpenLayers.Format.KML({
                         extractStyles: true,
                         extractAttributes: true
@@ -31,7 +52,7 @@ var Map = (function(document, window, $) {
                 })
             });
 
-        if (!mini) {
+	    if (!mini) {
             territory.events.register("loadend", territory, function (e) {
                 map.zoomToExtent(territory.getDataExtent());
 
