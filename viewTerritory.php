@@ -8,13 +8,19 @@
     if (!file_exists('my_files/card.png')) {
         throw new Exception("It looks like you don't yet have the 'card.png' file in the 'my_files' folder.  Please scan a S-12-E or similar and place there to continue.  This is not a digitally distributed file, which is why this measure is in place.");
     }
+
+	require_once('lib/EasyTerritoryMaker.php');
+	$etm = new EasyTerritoryMaker();
+	$territory = $etm->lookup($_REQUEST['territory']);
+
+
 ?><!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>Territory <?php echo $_REQUEST['territory'] ?></title>
+    <title>Territory <?php echo $territory->territory ?></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
@@ -132,19 +138,19 @@
     </script>
 </head>
 <body>
-    <input type="hidden" id="territory" value="<?php echo $_REQUEST['territory']; ?>" />
-    <input type="hidden" id="locality" value="<?php echo $_REQUEST['locality']; ?>" />
-    <input type="hidden" id="congregation" value="<?php echo $_REQUEST['congregation']; ?>" />
+    <input type="hidden" id="territory" value="<?php echo $territory->territory; ?>" />
+    <input type="hidden" id="locality" value="<?php echo $territory->locality; ?>" />
+    <input type="hidden" id="congregation" value="<?php echo $territory->congregation; ?>" />
 
     <img id="card" src="my_files/card.png" />
     <table id="cardLabel" style="position: absolute;" border="0">
         <tr>
             <td style="width: 3%;"></td>
             <td style="width: 10%;"></td>
-            <td style="width: 35%; white-space:nowrap;"><?php echo $_REQUEST['congregation'] . ' ' . $_REQUEST['locality']; ?></td>
+            <td style="width: 35%; white-space:nowrap;"><?php echo $territory->locality; ?></td>
             <td style="width: 1%;"></td>
             <td style="width: 10%;"></td>
-            <td style="width: 12%;"><?php echo $_REQUEST['territory']; ?></td>
+            <td style="width: 12%;"><?php echo $territory->territory; ?></td>
             <td style="width: 1%;"></td>
         </tr>
         <tr>

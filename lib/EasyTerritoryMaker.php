@@ -92,23 +92,69 @@ XPATH
      * @param string $locality
      * @return SimpleXMLElement[]
      */
-    function lookup($territory, $locality)
+    function lookupKml($territory, $locality = null)
 	{
+		$territoryKML = null;
         //If locality is set (ie Folder), use folder, otherwise, use Placemark
         if (empty($locality)) {
-            return $this->territoryXML->xpath(<<<XPATH
+	        //try first for  Placemark, then Folder
+	        $territoryKML = $this->territoryXML->xpath(<<<XPATH
 //kml:Document
     /kml:Placemark[kml:name/text()='$territory']
 XPATH
             );
+
+	        if (empty($territoryKML)) {
+		        $territoryKML = $this->territoryXML->xpath(<<<XPATH
+//kml:Document
+    /kml:Folder
+        /kml:Placemark[kml:name/text()='$territory']
+XPATH
+				);
+	        }
         } else {
-            return $this->territoryXML->xpath(<<<XPATH
+	        $territoryKML = $this->territoryXML->xpath(<<<XPATH
 //kml:Document
     /kml:Folder[kml:name/text()='$locality']
         /kml:Placemark[kml:name/text()='$territory']
 XPATH
             );
         }
+
+		if (empty($territoryKML)) {
+			return null;
+		}
+
+		return $territoryKML;
+	}
+
+	/**
+	 * @param $territory
+	 * @param $locality
+	 * @return null|TerritoryRef
+	 */
+	public function lookup($territory, $locality = null)
+	{
+
+		$kml = $this->lookupKml($territory, $locality);
+
+		if ($kml == null) {
+			return null;
+		}
+
+		$locality = $kml[0]->xpath("..");
+
+		$root = $locality[0]->xpath("..");
+
+		require_once('TerritoryRef.php');
+
+		$ref = new TerritoryRef(
+			$kml[0]->name . '',
+			$locality[0]->name . '',
+			$root[0]->name . ''
+		);
+
+		return $ref;
 	}
 
     /**
@@ -119,7 +165,7 @@ XPATH
     function getSingleKml($territory, $locality)
 	{
 		$result = '';
-		$territoryItems = $this->lookup($territory, $locality);
+		$territoryItems = $this->lookupKml($territory, $locality);
 
 		//list folders if is set
 		if (empty($territoryItems) == false) {
