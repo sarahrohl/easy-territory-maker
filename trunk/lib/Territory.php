@@ -8,30 +8,34 @@
 
 class Territory {
     public $territory;
-    public $publisher;
+    public $locality = '';
+    public $publisher = '';
+    public $congregation = '';
     public $out;
     public $in;
 	public $idealReturnDate;
 
     public function __construct($row = null)
     {
-        $this->territory = $row->territory . '';
-        $this->publisher = $row->publisher . '';
+        if ($row != null) {
+            $this->territory = $row->territory . '';
+            $this->publisher = $row->publisher . '';
 
-	    //out
-	    $out = $row->out . '';
-        if (!empty($out)) {
-            $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
-        }
+            //out
+            $out = $row->out . '';
+            if (!empty($out)) {
+                $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
+            }
 
-	    //ideal return date
-	    $this->idealReturnDate = strtotime(date("Y-m-d", $this->out) . " +4 month");
+            //ideal return date
+            $this->idealReturnDate = strtotime(date("Y-m-d", $this->out) . " +4 month");
 
-	    //in
-	    $in = $row->in . '';
+            //in
+            $in = $row->in . '';
 
-        if (!empty($in)) {
-            $this->in = DateTime::createFromFormat('!d/m/Y', $in)->getTimestamp();
+            if (!empty($in)) {
+                $this->in = DateTime::createFromFormat('!d/m/Y', $in)->getTimestamp();
+            }
         }
     }
 } 

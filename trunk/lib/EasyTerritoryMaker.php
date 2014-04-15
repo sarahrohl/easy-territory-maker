@@ -2,6 +2,8 @@
 
 class EasyTerritoryMaker
 {
+    public $secure = false;
+
 	public $territoryString;
     /**
      * @var SimpleXMLElement
@@ -23,8 +25,10 @@ class EasyTerritoryMaker
      */
     public $territoriesOut = array();
 
-	function __construct()
+	function __construct($secure = false)
 	{
+        $this->secure = $secure;
+
         //Include types
         require_once('Territory.php');
         require_once('TerritoryCollection.php');
@@ -44,30 +48,30 @@ class EasyTerritoryMaker
         $territoryXML->registerXPathNamespace('kml', 'http://earth.google.com/kml/2.2');
         $this->territoryXML = $territoryXML;
 
+        global $etm_config; require_once("config.php");
         //get google.spreadsheet.key, a spreadsheet, for use with tracking changes with territory over time
-        if (file_exists('my_files/google.spreadsheet.key')) {
-            $key = file_get_contents('my_files/google.spreadsheet.key');
-            $url = 'https://spreadsheets.google.com/feeds/list/' . $key . '/od6/public/values';
-            $this->territoryActivityString = $territoryActivityString = file_get_contents($url);
-            $territoryActivityXML = simplexml_load_string($territoryActivityString);
-            $territoryActivityXML->registerXPathNamespace('gsx', 'http://schemas.google.com/spreadsheets/2006/extended');
-            $territoryActivityXML->registerXPathNamespace('openSearch', 'http://a9.com/-/spec/opensearchrss/1.0/');
-            $this->territoryActivityXML = $territoryActivityXML;
 
-            foreach ($territoryActivityXML->entry as $child) {
-                $row = $child->children('gsx', TRUE);
-                $territoryName = $row->territory . '';
-                if (empty($this->territories[$territoryName])) {
-                    $this->territories[$territoryName] = new TerritoryCollection();
-                }
+        $key = $etm_config['google.spreadsheet.key'];
+        $url = 'https://spreadsheets.google.com/feeds/list/' . $key . '/od6/public/values';
+        $this->territoryActivityString = $territoryActivityString = file_get_contents($url);
+        $territoryActivityXML = simplexml_load_string($territoryActivityString);
+        $territoryActivityXML->registerXPathNamespace('gsx', 'http://schemas.google.com/spreadsheets/2006/extended');
+        $territoryActivityXML->registerXPathNamespace('openSearch', 'http://a9.com/-/spec/opensearchrss/1.0/');
+        $this->territoryActivityXML = $territoryActivityXML;
 
-                $territory = new Territory($row);
-                $this->territories[$territoryName]->add($territory);
+        foreach ($territoryActivityXML->entry as $child) {
+            $row = $child->children('gsx', TRUE);
+            $territoryName = $row->territory . '';
+            if (empty($this->territories[$territoryName])) {
+                $this->territories[$territoryName] = new TerritoryCollection();
+            }
 
-                if (empty($territory->in)) {
-	                $this->territories[$territoryName]->out = true;
-                    $this->territoriesOut[$territoryName] = $territory;
-                }
+            $territory = new Territory($row);
+            $this->territories[$territoryName]->add($territory);
+
+            if (empty($territory->in)) {
+                $this->territories[$territoryName]->out = true;
+                $this->territoriesOut[$territoryName] = $territory;
             }
         }
 	}
@@ -131,11 +135,10 @@ XPATH
 	/**
 	 * @param $territory
 	 * @param $locality
-	 * @return null|TerritoryRef
+	 * @return null|Territory
 	 */
 	public function lookup($territory, $locality = null)
 	{
-
 		$kml = $this->lookupKml($territory, $locality);
 
 		if ($kml == null) {
@@ -146,26 +149,50 @@ XPATH
 
 		$root = $locality[0]->xpath("..");
 
-		require_once('TerritoryRef.php');
+		require_once('Territory.php');
 
         if (isset($root[0]->Document)) {
-            $ref = new TerritoryRef(
-                $kml[0]->name . '',
-                '',
-                $locality[0]->name . ''
-            );
+            $foundTerritory = new Territory();
+            $foundTerritory->territory = $kml[0]->name . '';
+            $foundTerritory->congregation = $locality[0]->name . '';
         }
 
         else {
-            $ref = new TerritoryRef(
-                $kml[0]->name . '',
-                $locality[0]->name . '',
-                $root[0]->name . ''
-            );
-
+            $foundTerritory = new Territory();
+            $foundTerritory->territory = $kml[0]->name . '';
+            $foundTerritory->locality = $locality[0]->name . '';
+            $foundTerritory->congregation = $root[0]->name . '';
         }
 
-		return $ref;
+        if ($this->secure) {
+            if (isset($this->territories[$foundTerritory->territory])) {
+                $preSecureTerritoryCollection = $this->territories[$foundTerritory->territory];
+                $preSecureTerritory = $preSecureTerritoryCollection->mostRecent();
+                $publisherNameParts = explode(" ", $preSecureTerritory->publisher);
+                $initials = '';
+                foreach($publisherNameParts as $part) {
+                    $initials .= $part{0};
+                }
+
+                $attemptedInitials = strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $_REQUEST['initials']));
+                $actualInitials = strtolower(preg_replace("/[^A-Za-z0-9 ]/", '', $initials));
+                if (
+                    !empty($attemptedInitials)
+                    && $attemptedInitials ===  $actualInitials
+                ) {
+                    //SUCCESS!
+                    session_start();
+                    $_SESSION['viewFolder'] = true;
+                    return $foundTerritory;
+                } else {
+                    //Failed attempt
+                    session_destroy();
+                    return null;
+                }
+            }
+        }
+
+		return $foundTerritory;
 	}
 
     /**
@@ -222,7 +249,7 @@ XPATH
 	public function sort()
 	{
 		usort($this->territoriesOut, function (Territory $a, Territory $b) {
-			return $b->out - $a->out;
+			return $a->out - $b->out;
 		});
 	}
 

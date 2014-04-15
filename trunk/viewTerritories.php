@@ -1,7 +1,10 @@
 <?php
-	$_REQUEST = array_merge(array(
-		"congregation" => ""
-	), $_REQUEST);
+require_once("security.php");
+
+$_REQUEST = array_merge(array(
+    "congregation" => ""
+), $_REQUEST);
+
 ?><!DOCTYPE html>
 <html>
 <head>
