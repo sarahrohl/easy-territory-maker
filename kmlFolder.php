@@ -1,4 +1,11 @@
 <?php
+//security
+session_start();
+
+if (!isset($_SESSION['viewFolder'])) {
+    exit;
+}
+
 //set this to xml
 header ("Content-Type:text/xml");
 

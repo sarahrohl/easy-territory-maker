@@ -1,118 +1,118 @@
 <?php
 
-	if (!file_exists('bower_components')) {
-	    throw new Exception("It looks like you have not setup 'bower'.  Please set it up first, and continue.");
-	}
+require_once("security.php");
+
+if (!file_exists('bower_components')) {
+    throw new Exception("It looks like you have not setup 'bower'.  Please set it up first, and continue.");
+}
+
+global $etm_config; require_once('config.php');
+
+$key = $etm_config['google.spreadsheet.key'];
+
+//include and instantiate EasyTerritoryMaker
+include_once('lib/EasyTerritoryMaker.php');
+$etm = new EasyTerritoryMaker();
+$list = '';
+$territoryAssignmentRecords = '';
+$territoryAssignmentRecordsTick = 0;
+$territoryAssignmentRecordsIndex = 0;
+$index = 0;
+
+$overview = '';
+//write string from etm->all()
+foreach($etm->all() as $locality) {
+    $localityName = $locality->name;
+    $localityNameEncoded = urlencode($locality->name);
+
+    //The very first map is of all of the territory
+    if ($index == 0) {
+        $overview = "<span id='overview' class='territory'>
+                    <a href='viewTerritories.php?index=$index'>$localityName - Overview</a>
+                </span>";
+        $index++;
+    }
 
 
-	$key = '';
-	if (file_exists('my_files/google.spreadsheet.key')) {
-		$key = file_get_contents('my_files/google.spreadsheet.key');
-	}
+    //the following maps, are of individual parts of the territory
+    else {
 
-	//include and instantiate EasyTerritoryMaker
-	include_once('lib/EasyTerritoryMaker.php');
-	$etm = new EasyTerritoryMaker();
-	$list = '';
-    $territoryAssignmentRecords = '';
-    $territoryAssignmentRecordsTick = 0;
-    $territoryAssignmentRecordsIndex = 0;
-	$index = 0;
+        //If has a placemark, it is a Locality (ie Folder), so list it's Placemarks (IE Territories)
+        if (!empty($locality->Placemark)) {
+            foreach($locality as $territory) {
+                if (!empty($territory->name)) {
+                    $territoryName = $territory->name . '';
 
-	$overview = '';
-	//write string from etm->all()
-	foreach($etm->all() as $locality) {
-	    $localityName = $locality->name;
-	    $localityNameEncoded = urlencode($locality->name);
+                    $territoryNameEncoded = urlencode($territory->name);
 
-		//The very first map is of all of the territory
-		if ($index == 0) {
-			$overview = "<span id='overview' class='territory'>
-		                <a href='viewTerritories.php?index=$index'>$localityName - Overview</a>
-		            </span>";
-			$index++;
-		}
+                    $status = $etm->getSingleStatus($territoryName);
 
+                    $list .= "<tr>
+                        <td id='territory$index' class='territory' data-index='$index'>
+                            <a href='viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded&index=$index'>$territoryName - $localityName</a>
+                        </td>
+                        <td class='center'>$status</td>
+                    </tr>";
 
-		//the following maps, are of individual parts of the territory
-		else {
+                    $index++;
 
-		    //If has a placemark, it is a Locality (ie Folder), so list it's Placemarks (IE Territories)
-		    if (!empty($locality->Placemark)) {
-		        foreach($locality as $territory) {
-		            if (!empty($territory->name)) {
-		                $territoryName = $territory->name . '';
+                    //write the territory assignment records
+                    if ($territoryAssignmentRecordsTick == 0) {
+                        $territoryAssignmentRecordsIndex++;
+                        $territoryAssignmentRecordsTick++;
+                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set $territoryAssignmentRecordsIndex</a></li>";
+                    } else if ($territoryAssignmentRecordsTick >= 5) {
+                        $territoryAssignmentRecordsTick = 0;
+                    } else {
+                        $territoryAssignmentRecordsTick++;
+                    }
+                }
+            }
+        }
 
-		                $territoryNameEncoded = urlencode($territory->name);
+        //Otherwise it is a Placemark (ie Territory)
+        else {
+            $status = $etm->getSingleStatus($localityName . '');
 
-			            $status = $etm->getSingleStatus($territoryName);
+            //write the standard list of territories
+            $list .= "<tr>
+                <td id='territory$index' class='territory' data-index='$index'>
+                    <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index'>$localityName</a>
+                </td>
+                <td>$status</td>
+            </tr>";
 
-			            $list .= "<tr>
-							<td id='territory$index' class='territory' data-index='$index'>
-	                            <a href='viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded&index=$index'>$territoryName - $localityName</a>
-	                        </td>
-	                        <td class='center'>$status</td>
-	                    </tr>";
-
-		                $index++;
-
-                        //write the territory assignment records
-                        if ($territoryAssignmentRecordsTick == 0) {
-                            $territoryAssignmentRecordsIndex++;
-                            $territoryAssignmentRecordsTick++;
-                            $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set $territoryAssignmentRecordsIndex</a></li>";
-                        } else if ($territoryAssignmentRecordsTick >= 5) {
-                            $territoryAssignmentRecordsTick = 0;
-                        } else {
-                            $territoryAssignmentRecordsTick++;
-                        }
-		            }
-		        }
-		    }
-
-		    //Otherwise it is a Placemark (ie Territory)
-		    else {
-			    $status = $etm->getSingleStatus($localityName . '');
-
-                //write the standard list of territories
-			    $list .= "<tr>
-					<td id='territory$index' class='territory' data-index='$index'>
-			            <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index'>$localityName</a>
-		            </td>
-	                <td>$status</td>
-	            </tr>";
-
-		        $index++;
-		    }
-		}
-	}
+            $index++;
+        }
+    }
+}
 
 
-	//create priority
-	$priority = '';
-	foreach($etm->getPriority() as $territory) {
-		$publisher = $territory->publisher;
-		$territoryName = $territory->territory;
-		$date = date("m/d/Y", $territory->in);
-		$priority .= "<tr>
-					<td class='center'>$territoryName</td>
-	                <td class='center'>$date</td>
-	            </tr>";
-	}
+//create priority
+$priority = '';
+foreach($etm->getPriority() as $territory) {
+    $publisher = $territory->publisher;
+    $territoryName = $territory->territory;
+    $date = date("m/d/Y", $territory->in);
+    $priority .= "<tr>
+                <td class='center'>$territoryName</td>
+                <td class='center'>$date</td>
+            </tr>";
+}
 
 
-	//create ideal return dates
-	$idealReturnDates = '';
-	foreach($etm->getIdealReturnDates() as $territory) {
-		$publisher = $territory->publisher;
-		$territoryName = $territory->territory;
-		$date = date("m/d/Y", $territory->idealReturnDate);
-		$idealReturnDates .= "<tr>
-					<td>$publisher</td>
-					<td class='center'>$territoryName</td>
-	                <td class='center'>$date</td>
-	            </tr>";
-	}
+//create ideal return dates
+$idealReturnDates = '';
+foreach($etm->getIdealReturnDates() as $territory) {
+    $publisher = $territory->publisher;
+    $territoryName = $territory->territory;
+    $date = date("m/d/Y", $territory->idealReturnDate);
+    $idealReturnDates .= "<tr>
+                <td>$publisher</td>
+                <td class='center'>$territoryName</td>
+                <td class='center'>$date</td>
+            </tr>";
+}
 ?><!DOCTYPE html>
 <html>
 <head>

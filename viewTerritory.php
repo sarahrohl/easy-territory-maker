@@ -1,4 +1,13 @@
 <?php
+    global $security;
+
+    $security = (isset($security) ? $security : null);
+
+
+    if ($security == null) {
+        require_once("security.php");
+    }
+
 	$_REQUEST = array_merge(array(
 		"territory" => "1",
 		"congregation" => "",
@@ -10,9 +19,12 @@
     }
 
 	require_once('lib/EasyTerritoryMaker.php');
-	$etm = new EasyTerritoryMaker();
+	$etm = new EasyTerritoryMaker($security);
 	$territory = $etm->lookup($_REQUEST['territory']);
-
+    if ($territory === null) {
+        echo "You entered something that did not match what is on file.  Inform the territory servant so you can procede.";
+        exit;
+    }
 
 ?><!DOCTYPE html>
 <html>

@@ -19,7 +19,7 @@ class TerritoryCollection {
 	public function sort()
 	{
 		usort($this->collection, function (Territory $a, Territory $b) {
-			return $b->out - $a->out;
+			return $a->out - $b->out;
 		});
 	}
 
