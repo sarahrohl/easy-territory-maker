@@ -148,11 +148,22 @@ XPATH
 
 		require_once('TerritoryRef.php');
 
-		$ref = new TerritoryRef(
-			$kml[0]->name . '',
-			$locality[0]->name . '',
-			$root[0]->name . ''
-		);
+        if (isset($root[0]->Document)) {
+            $ref = new TerritoryRef(
+                $kml[0]->name . '',
+                '',
+                $locality[0]->name . ''
+            );
+        }
+
+        else {
+            $ref = new TerritoryRef(
+                $kml[0]->name . '',
+                $locality[0]->name . '',
+                $root[0]->name . ''
+            );
+
+        }
 
 		return $ref;
 	}

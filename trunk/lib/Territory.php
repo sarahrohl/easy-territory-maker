@@ -20,7 +20,9 @@ class Territory {
 
 	    //out
 	    $out = $row->out . '';
-        $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
+        if (!empty($out)) {
+            $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
+        }
 
 	    //ideal return date
 	    $this->idealReturnDate = strtotime(date("Y-m-d", $this->out) . " +4 month");

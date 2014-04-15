@@ -147,7 +147,9 @@
         <tr>
             <td style="width: 3%;"></td>
             <td style="width: 10%;"></td>
-            <td style="width: 35%; white-space:nowrap;"><?php echo $territory->locality; ?></td>
+            <td style="width: 35%; max-width:35%;">
+                <span style="position: absolute; max-width: 12em; top: 0.23em; line-height: 0.9em;"><?php echo $territory->locality; ?></span>
+            </td>
             <td style="width: 1%;"></td>
             <td style="width: 10%;"></td>
             <td style="width: 12%;"><?php echo $territory->territory; ?></td>
