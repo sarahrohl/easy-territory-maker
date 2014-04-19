@@ -1,6 +1,37 @@
 <?php
 require_once("security.php");
+require_once('lib/EasyTerritoryMaker.php');
+	$etm = new EasyTerritoryMaker();
+	$startingTerritoryName = $_REQUEST['at'] * 1;
+	$endingTerritoryName =  $startingTerritoryName + 4;
+	$list = "";
+	$offset = 0;
+	for($i = $startingTerritoryName; $i <= $endingTerritoryName; $i++) {
+		$territoryRecord = $etm->territories[$i]->sort();
 
+		$left = ($offset * 455) + 130;
+		$list .= "<table style='position: absolute; top: 290px; left: {$left}px; font-size: 46px; width: 454px;'>
+		<tr><td colspan='2' style='height: 40px; padding-left: 120px;'>$i</td></tr>";
+
+		$offset++;
+
+		foreach($territoryRecord->collection as $territory) {
+			$out = date("m/d/Y", $territory->out);
+			$in = date("m/d/Y", $territory->in);
+			$list .= <<<HTML
+<tr>
+	<td colspan='2'>$territory->publisher</td>
+</tr>
+<tr>
+	<td>$out</td>
+	<td>$in</td>
+</tr>
+HTML;
+
+		}
+
+		$list .= '</table>';
+	}
 ?><!DOCTYPE html>
 <html>
 <head>
@@ -10,7 +41,7 @@ require_once("security.php");
     <title>Territory Assignment Records</title>
 </head>
 <body>
-    <b>COMING SOON</b>
-    <img id="card" src="my_files/s13.png" />
+    <img id="card" src="my_files/s13.png" style="position: absolute; top: 0px; left: 0px;"/>
+    <?php echo $list;?>
 </body>
 </html>

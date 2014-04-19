@@ -8,7 +8,10 @@
 
 class TerritoryCollection {
 	public $length = 0;
-    public $collection = array();
+	/**
+	 * @var Territory[]
+	 */
+	public $collection = array();
 	public $out = false;
 
     public function add($territory) {
@@ -21,6 +24,8 @@ class TerritoryCollection {
 		usort($this->collection, function (Territory $a, Territory $b) {
 			return $a->out - $b->out;
 		});
+
+		return $this;
 	}
 
 	/**
