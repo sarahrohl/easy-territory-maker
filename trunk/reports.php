@@ -54,18 +54,20 @@ foreach($etm->all() as $locality) {
                         <td class='center'>$status</td>
                     </tr>";
 
-                    $index++;
-
                     //write the territory assignment records
                     if ($territoryAssignmentRecordsTick == 0) {
-                        $territoryAssignmentRecordsIndex++;
-                        $territoryAssignmentRecordsTick++;
-                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set $territoryAssignmentRecordsIndex</a></li>";
-                    } else if ($territoryAssignmentRecordsTick >= 5) {
+                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set " . $index . "</a></li>";
+	                    $territoryAssignmentRecordsIndex++;
+	                    $territoryAssignmentRecordsTick++;
+                    }
+
+	                if ($territoryAssignmentRecordsTick >= 5) {
                         $territoryAssignmentRecordsTick = 0;
                     } else {
                         $territoryAssignmentRecordsTick++;
                     }
+
+	                $index++;
                 }
             }
         }
