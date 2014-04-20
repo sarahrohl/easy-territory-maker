@@ -12,7 +12,7 @@ if (isset($_REQUEST['logout'])) {
 }
 
 if (isset($_REQUEST['password'])) {
-    if ($_REQUEST['password'] === $etm_config['password']) {
+    if ($_REQUEST['password'] === $etm_config->password) {
         $_SESSION['fingerprint'] = md5($_SERVER['HTTP_USER_AGENT'] . $_REQUEST['password'] . $_SERVER['REMOTE_ADDR']);
         $_SESSION['viewFolder'] = true;
     }
@@ -20,7 +20,7 @@ if (isset($_REQUEST['password'])) {
 
 if (
     !isset($_SESSION['fingerprint'])
-    || $_SESSION['fingerprint'] != md5($_SERVER['HTTP_USER_AGENT'] . $etm_config['password'] . $_SERVER['REMOTE_ADDR'])
+    || $_SESSION['fingerprint'] != md5($_SERVER['HTTP_USER_AGENT'] . $etm_config->password . $_SERVER['REMOTE_ADDR'])
 ) {
 
     echo "<html>
