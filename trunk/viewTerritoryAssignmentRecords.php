@@ -4,17 +4,23 @@ require_once("security.php");
 require_once('lib/EasyTerritoryMaker.php');
 	$etm = new EasyTerritoryMaker();
 	$startingTerritoryName = $_REQUEST['at'] * 1;
+	$lastTerritoryName = $_REQUEST['max'] * 1;
 	$endingTerritoryName =  $startingTerritoryName + 4;
 	$list = "";
 	$offset = 0;
 
-	for($i = $startingTerritoryName; $i <= $endingTerritoryName; $i++)
+	for($i = $startingTerritoryName; $i <= $endingTerritoryName && $i <= $lastTerritoryName; $i++)
 	{
 		$left = ($offset * 456) + 130;
 
-		$list .= "<table style='position: absolute; top: 290px; left: {$left}px; width: 454px;'>
-		<tr><td colspan='2' style='height: 40px; padding-left: 120px; padding-bottom: 10px;'>$i</td></tr>";
-
+		$list .= <<<HTML
+<table style='position: absolute; top: 290px; left: {$left}px; width: 454px;'>
+		<tr>
+			<td colspan='2' style='height: 40px; padding-left: 120px; padding-bottom: 10px;'>
+				<a href="viewTerritory.php?territory=$i">$i</a>
+			</td>
+		</tr>
+HTML;
 		$offset++;
 
 		if (empty($etm->territories[$i])) continue;
@@ -50,6 +56,8 @@ HTML;
 			font-family: "Consolas", monospace;
 			font-size: 35px;
 			line-height: 53px;
+			text-decoration: none;
+			color: black;
 		}
 	</style>
 </head>

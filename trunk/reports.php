@@ -18,6 +18,7 @@ $territoryAssignmentRecords = '';
 $territoryAssignmentRecordsTick = 0;
 $territoryAssignmentRecordsIndex = 0;
 $index = 0;
+$lastTerritoryNumber = $etm->lastTerritoryName();
 
 $overview = '';
 //write string from etm->all()
@@ -56,7 +57,7 @@ foreach($etm->all() as $locality) {
 
                     //write the territory assignment records
                     if ($territoryAssignmentRecordsTick == 0) {
-                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index'>Set " . $index . "</a></li>";
+                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index&max=$lastTerritoryNumber'>Set " . $index . "</a></li>";
 	                    $territoryAssignmentRecordsIndex++;
 	                    $territoryAssignmentRecordsTick++;
                     }
