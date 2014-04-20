@@ -15,7 +15,9 @@ class Territory {
     public $in;
 	public $idealReturnDate;
 
-    public function __construct($row = null)
+	static public $secondsInMonth = 2592000;
+
+    public function __construct($row = null, $dateFormat = null)
     {
         if ($row != null) {
             $this->territory = $row->territory . '';
@@ -23,18 +25,22 @@ class Territory {
 
             //out
             $out = $row->out . '';
-            if (!empty($out)) {
-                $this->out = DateTime::createFromFormat('!d/m/Y', $out)->getTimestamp();
+            if (empty($out)) {
+	            $this->out = null;
+            } else {
+                $this->out = DateTime::createFromFormat($dateFormat, $out)->getTimestamp();
             }
 
             //ideal return date
-            $this->idealReturnDate = strtotime(date("Y-m-d", $this->out) . " +4 month");
+            $this->idealReturnDate = $this->out + (self::$secondsInMonth * 4);
 
             //in
             $in = $row->in . '';
 
-            if (!empty($in)) {
-                $this->in = DateTime::createFromFormat('!d/m/Y', $in)->getTimestamp();
+            if (empty($in)) {
+	            $this->in = null;
+            } else {
+                $this->in = DateTime::createFromFormat($dateFormat, $in)->getTimestamp();
             }
         }
     }

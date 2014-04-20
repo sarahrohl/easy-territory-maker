@@ -8,7 +8,7 @@ if (!file_exists('bower_components')) {
 
 global $etm_config; require_once('config.php');
 
-$key = $etm_config['google.spreadsheet.key'];
+$key = $etm_config->googleSpreadsheetKey;
 
 //include and instantiate EasyTerritoryMaker
 include_once('lib/EasyTerritoryMaker.php');
@@ -92,10 +92,11 @@ foreach($etm->all() as $locality) {
 
 //create priority
 $priority = '';
+$dateFormat = $etm_config->dateFormat;
 foreach($etm->getPriority() as $territory) {
     $publisher = $territory->publisher;
     $territoryName = $territory->territory;
-    $date = date("m/d/Y", $territory->in);
+    $date = date($dateFormat, $territory->in);
     $priority .= "<tr>
                 <td class='center'>$territoryName</td>
                 <td class='center'>$date</td>
@@ -108,7 +109,7 @@ $idealReturnDates = '';
 foreach($etm->getIdealReturnDates() as $territory) {
     $publisher = $territory->publisher;
     $territoryName = $territory->territory;
-    $date = date("m/d/Y", $territory->idealReturnDate);
+    $date = date($dateFormat, $territory->idealReturnDate);
     $idealReturnDates .= "<tr>
                 <td>$publisher</td>
                 <td class='center'>$territoryName</td>

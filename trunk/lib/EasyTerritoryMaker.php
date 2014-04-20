@@ -33,10 +33,6 @@ class EasyTerritoryMaker
         require_once('Territory.php');
         require_once('TerritoryCollection.php');
 
-        //Change directory to that of the parent directory
-        $dir = dirname(dirname(__FILE__));
-        chdir($dir);
-
         //Throw helpful error if territory.kml doesn't exist
         if (!file_exists('my_files/territory.kml')) {
             throw new Exception("The 'territory.kml' file, created with Google Earth, does not exist in the 'my_files' folder.  Please save it there, and continue.");
@@ -51,13 +47,14 @@ class EasyTerritoryMaker
         global $etm_config; require_once("config.php");
         //get google.spreadsheet.key, a spreadsheet, for use with tracking changes with territory over time
 
-        $key = $etm_config['google.spreadsheet.key'];
+        $key = $etm_config->googleSpreadsheetKey;
         $url = 'https://spreadsheets.google.com/feeds/list/' . $key . '/od6/public/values';
         $this->territoryActivityString = $territoryActivityString = file_get_contents($url);
         $territoryActivityXML = simplexml_load_string($territoryActivityString);
         $territoryActivityXML->registerXPathNamespace('gsx', 'http://schemas.google.com/spreadsheets/2006/extended');
         $territoryActivityXML->registerXPathNamespace('openSearch', 'http://a9.com/-/spec/opensearchrss/1.0/');
         $this->territoryActivityXML = $territoryActivityXML;
+		$dateFormat = $etm_config->dateFormat;
 
         foreach ($territoryActivityXML->entry as $child) {
             $row = $child->children('gsx', TRUE);
@@ -66,7 +63,7 @@ class EasyTerritoryMaker
                 $this->territories[$territoryName] = new TerritoryCollection();
             }
 
-            $territory = new Territory($row);
+            $territory = new Territory($row, $dateFormat);
             $this->territories[$territoryName]->add($territory);
 
             if (empty($territory->in)) {
