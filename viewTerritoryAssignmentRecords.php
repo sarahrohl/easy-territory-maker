@@ -13,7 +13,7 @@ require_once('lib/EasyTerritoryMaker.php');
 		$left = ($offset * 456) + 130;
 
 		$list .= "<table style='position: absolute; top: 290px; left: {$left}px; width: 454px;'>
-		<tr><td colspan='2' style='height: 40px; padding-left: 120px;'>$i</td></tr>";
+		<tr><td colspan='2' style='height: 40px; padding-left: 120px; padding-bottom: 10px;'>$i</td></tr>";
 
 		$offset++;
 
