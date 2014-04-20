@@ -278,4 +278,36 @@ XPATH
 
 		return $territories;
 	}
+
+	public function lastTerritoryName()
+	{
+
+		//First look up folder structure Document / Folder / Placemark
+		$last = $this->territoryXML->xpath(<<<XPATH
+//kml:Document
+    /kml:Folder[last()]
+XPATH
+);
+		if (!empty($last[0]->Placemark)) {
+			$name = $last[0]->Placemark->name . '';
+			return $name;
+		}
+
+
+		//If the above structure doesn't exist, look up folder structure Document / Placemark
+		else {
+			$last = $this->territoryActivityXML->xpath(<<<XPATH
+//kml:Document
+    /kml:Placemark[last()]
+XPATH
+);
+			if (!empty($last[0])) {
+				$name = $last[0]->name . '';
+				return $name;
+			}
+		}
+
+		//If all fails, return empty string.
+		return '';
+	}
 }
