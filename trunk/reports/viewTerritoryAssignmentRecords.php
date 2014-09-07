@@ -1,7 +1,7 @@
 <?php
-global $etm_config; require_once("config.php");
-require_once("security.php");
-require_once('lib/EasyTerritoryMaker.php');
+global $etm_config; require_once("../config.php");
+require_once("../security.php");
+require_once('../lib/EasyTerritoryMaker.php');
 	$etm = new EasyTerritoryMaker();
 	$startingTerritoryName = $_REQUEST['at'] * 1;
 	$lastTerritoryName = $_REQUEST['max'] * 1;
@@ -62,7 +62,7 @@ HTML;
 	</style>
 </head>
 <body>
-    <img id="card" src="my_files/s13.png" style="position: absolute; top: 0px; left: 0px;"/>
+    <img id="card" src="../my_files/s13.png" style="position: absolute; top: 0px; left: 0px;"/>
     <?php echo $list;?>
 </body>
 </html>

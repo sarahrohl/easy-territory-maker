@@ -17,7 +17,7 @@ class Territory {
 
 	static public $secondsInMonth = 2592000;
 
-    public function __construct($row = null, $dateFormat = null)
+    public function __construct($row = null, $locality = null, $dateFormat = null)
     {
         if ($row != null) {
             $this->territory = $row->territory . '';
@@ -42,6 +42,8 @@ class Territory {
             } else {
                 $this->in = DateTime::createFromFormat($dateFormat, $in)->getTimestamp();
             }
+
+	        $this->locality = $locality;
         }
     }
 } 

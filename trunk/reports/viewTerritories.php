@@ -1,5 +1,5 @@
 <?php
-require_once("security.php");
+require_once("../security.php");
 
 $_REQUEST = array_merge(array(
     "congregation" => ""
@@ -13,11 +13,11 @@ $_REQUEST = array_merge(array(
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title><?php echo $_REQUEST['congregation'];?> Territory</title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
-    <script src="lib/Map.js"></script>
-    <script src="bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
-    <link href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="../lib/Map.js"></script>
+    <script src="../bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
+    <link href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
 
     <style type="text/css">
         html, body {
@@ -61,7 +61,7 @@ $_REQUEST = array_merge(array(
         }
     </style>
 <?php }?>
-    <script src="bower_components/OpenLayers/lib/OpenLayers.js"></script>
+    <script src="../bower_components/OpenLayers/lib/OpenLayers.js"></script>
     <script>
 	    $(function() {
 		    console.log(new Map($('#map')));

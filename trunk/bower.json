@@ -18,8 +18,11 @@
     "tests"
   ],
   "dependencies": {
-    "OpenLayers" : "http://openlayers.org/download/OpenLayers-2.12.zip",
-    "jquery" : "git://github.com/jquery/jquery.git",
-    "jquery-ui" : "git://github.com/components/jqueryui"
+    "OpenLayers": "http://openlayers.org/download/OpenLayers-2.12.zip",
+    "jquery": "git://github.com/jquery/jquery.git",
+    "jquery-ui": "git://github.com/components/jqueryui",
+    "leaflet": "~0.7.3",
+    "togeojson": "~0.8.1",
+    "knockout": "~3.2.0"
   }
 }
