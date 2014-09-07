@@ -5,7 +5,7 @@
 
 
     if ($security == null) {
-        require_once("security.php");
+        require_once("../security.php");
     }
 
 	$_REQUEST = array_merge(array(
@@ -14,11 +14,11 @@
 		"locality" => ""
 	), $_REQUEST);
 
-    if (!file_exists('my_files/card.png')) {
+    if (!file_exists('../my_files/card.png')) {
         throw new Exception("It looks like you don't yet have the 'card.png' file in the 'my_files' folder.  Please scan a S-12-E or similar and place there to continue.  This is not a digitally distributed file, which is why this measure is in place.");
     }
 
-	require_once('lib/EasyTerritoryMaker.php');
+	require_once('../lib/EasyTerritoryMaker.php');
 	$etm = new EasyTerritoryMaker($security);
 	$territory = $etm->lookup($_REQUEST['territory']);
     if ($territory === null) {
@@ -34,11 +34,11 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>Territory <?php echo $territory->territory ?></title>
     <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/jquery-ui/ui/jquery-ui.js"></script>
-    <script src="lib/Map.js"></script>
-    <script src="bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
-    <link href="bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/jquery-ui/ui/jquery-ui.js"></script>
+    <script src="../lib/Map.js"></script>
+    <script src="../bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
+    <link href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
 
     <style type="text/css">
         html, body {
@@ -82,7 +82,7 @@
         }
     </style>
 <?php }?>
-    <script src="bower_components/OpenLayers/lib/OpenLayers.js"></script>
+    <script src="../bower_components/OpenLayers/lib/OpenLayers.js"></script>
     <script>
         $(function() {
             var height = $(window).height(),
@@ -154,7 +154,7 @@
     <input type="hidden" id="locality" value="<?php echo $territory->locality; ?>" />
     <input type="hidden" id="congregation" value="<?php echo $territory->congregation; ?>" />
 
-    <img id="card" src="my_files/card.png" />
+    <img id="card" src="../my_files/card.png" />
     <table id="cardLabel" style="position: absolute;" border="0">
         <tr>
             <td style="width: 3%;"></td>
@@ -238,6 +238,6 @@
     </table>
     <br style="line-height: 4px;" />
     <div id="map" class="smallmap" style="border: none;"></div>
-    <img id="north" src="img/n.png" />
+    <img id="north" src="../assets/img/n.png" />
 </body>
 </html>

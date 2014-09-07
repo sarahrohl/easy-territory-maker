@@ -3,6 +3,9 @@
 class EasyTerritoryMaker
 {
     public $secure = false;
+	public $store = array();
+	public $storeByLocality = array();
+	public $storeByName = array();
 
 	public $territoryString;
     /**
@@ -33,18 +36,21 @@ class EasyTerritoryMaker
         require_once('Territory.php');
         require_once('TerritoryCollection.php');
 
+		$dir = dirname(dirname(__FILE__));
+		$kmlFileLocation = $dir . '/my_files/territory.kml';
+
         //Throw helpful error if territory.kml doesn't exist
-        if (!file_exists('my_files/territory.kml')) {
+        if (!file_exists($kmlFileLocation)) {
             throw new Exception("The 'territory.kml' file, created with Google Earth, does not exist in the 'my_files' folder.  Please save it there, and continue.");
         }
 
         //get territory.kml file, and read it to xml, and setup kml namespace
-        $this->territoryString = file_get_contents('my_files/territory.kml');
+        $this->territoryString = file_get_contents($kmlFileLocation);
         $territoryXML = simplexml_load_string($this->territoryString);
         $territoryXML->registerXPathNamespace('kml', 'http://earth.google.com/kml/2.2');
         $this->territoryXML = $territoryXML;
 
-        global $etm_config; require_once("config.php");
+        global $etm_config; require_once($dir . "/config.php");
         //get google.spreadsheet.key, a spreadsheet, for use with tracking changes with territory over time
 
         $key = $etm_config->googleSpreadsheetKey;
@@ -56,14 +62,35 @@ class EasyTerritoryMaker
         $this->territoryActivityXML = $territoryActivityXML;
 		$dateFormat = $etm_config->dateFormat;
 
+		//Search through the xml at Document.Folder, or Document.Placemark
+		$this->store = $this->territoryXML->xpath(<<<XPATH
+//kml:Document
+    /kml:Folder
+|//kml:Document
+    /kml:Placemark
+XPATH
+		);
+
+		foreach($this->store as $data) {
+			if (isset($data->Placemark)) {
+				foreach($data->Placemark as $territory) {
+					$name = $territory->name . '';
+					$territory->locality = $data->name . '';
+					$this->storeByName[$name] = $territory;
+				}
+			}
+		}
+
         foreach ($territoryActivityXML->entry as $child) {
             $row = $child->children('gsx', TRUE);
             $territoryName = $row->territory . '';
+	        $locality = $this->storeByName[$territoryName]->locality . '';
+
             if (empty($this->territories[$territoryName])) {
                 $this->territories[$territoryName] = new TerritoryCollection();
             }
 
-            $territory = new Territory($row, $dateFormat);
+            $territory = new Territory($row, $locality, $dateFormat);
             $this->territories[$territoryName]->add($territory);
 
             if (empty($territory->in)) {
@@ -78,14 +105,7 @@ class EasyTerritoryMaker
      */
     function all()
 	{
-        //Search through the xml at Document.Folder, or Document.Placemark
-		return $this->territoryXML->xpath(<<<XPATH
-//kml:Document
-    /kml:Folder
-|//kml:Document
-    /kml:Placemark
-XPATH
-        );
+		return $this->store;
 	}
 
     /**
@@ -222,25 +242,24 @@ XPATH
 
 	/**
 	 * @param $territory
-	 * @return null|TerritoryCollection
+	 * @return null|Territory
 	 *
 	 */
 	function getSingleStatus($territory)
 	{
 		$activity = null;
+		$mostRecentActivity = null;
 		if (array_key_exists($territory, $this->territories)) {
 			$activity = $this->territories[$territory];
 		}
 
-		$status = '<span style="color: green;">In</span>';;
 		if ($activity != null) {
 			if ($activity->out) {
-				$expected = date("m/d/Y", $activity->mostRecent()->idealReturnDate);
-				$status = "<span style='color: blue;'>Out - Expected $expected</span>";
+				$mostRecentActivity = $activity->mostRecent();
 			}
 		}
 
-		return $status;
+		return $mostRecentActivity;
 	}
 
 	public function sort()
