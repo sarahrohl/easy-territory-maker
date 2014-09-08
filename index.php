@@ -3,7 +3,7 @@
 if (isset($_REQUEST['territory'])) {
     global $security;
     $security = true;
-	require_once('viewTerritory.php');
+	require_once('reports/viewTerritory.php');
 	exit;
 }
 ?><!DOCTYPE html>
