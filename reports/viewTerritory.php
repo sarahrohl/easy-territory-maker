@@ -78,6 +78,10 @@
 	    #directions ul {
 		    padding-left: 7px;
 	    }
+	    #aerial-map-note {
+		    color: red;
+		    line-height: auto;
+	    }
     </style>
 <?php if (!isset($_REQUEST['debug'])) {?>
     <style>
@@ -180,7 +184,7 @@
                 left: (mapPosition.left + 10) + 'px'
             });
 
-	        directions.css('font-size', (width * 0.012) + 'px');
+	        directions.css('font-size', (width * 0.011) + 'px');
 	        aerialMapNote.css('font-size', (width * 0.012) + 'px');
 
 	        north.css('top', (height * 1.2) + 'px');
@@ -189,7 +193,7 @@
 		        .height(height)
 		        .width(width);
 
-	        mapMiniElement.height(height * 0.5);
+	        mapMiniElement.height(height * 0.57);
         }
 
         function onPopupClose(evt) {
@@ -222,10 +226,11 @@
             <td style="width: 1%;"></td>
         </tr>
         <tr>
-            <td></td>
-            <td colspan="2" style="text-align: center;">
-                <br />
+            <td colspan="3" style="text-align: center;padding-left: 1%; vertical-align: top;">
                 <div id="mapMini" style="border: none;"></div>
+		        <div id="aerial-map-note">
+			        (aerial map, larger map on back)
+		        </div>
             </td>
             <td></td>
             <td id="directions" colspan="2">
@@ -281,12 +286,6 @@
                         <td>&nbsp;</td>
                     </tr>
                 </table>
-            </td>
-        </tr>
-        <tr>
-            <td></td>
-            <td id="aerial-map-note" style="color: red;text-align: center;" colspan="2">
-                (aerial map, larger map on back)
             </td>
         </tr>
     </table>
