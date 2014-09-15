@@ -39,7 +39,19 @@ $_REQUEST = array_merge(array(
 	<script src="../bower_components/togeojson/togeojson.js"></script>
 
     <script>
+	    function inIframe () {
+		    var tabs = parent.$('#tabs');
+	        return tabs.length > 0;
+	    }
+
 	    $(function() {
+		    if (inIframe()) {
+			    $('#map')
+				    .css({
+					    'height': ($(parent.window).height() * 0.9) + 'px',
+					    'width': '100%'
+				    });
+		    }
 		    $.when(
 			    $.ajax("../my_files/territory.kml")
 		    ).then(function(mapXml) {
