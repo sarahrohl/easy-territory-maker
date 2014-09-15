@@ -142,10 +142,12 @@ HTML;
 ?><!DOCTYPE html>
 <html>
 <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+	<meta name="apple-mobile-web-app-capable" content="yes">
 	<title>Territories</title>
     <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/jquery-ui/ui/jquery-ui.js"></script>
-    <script src="../bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
+    <script src="../bower_components/jquery-ui/jquery-ui.js"></script>
     <link href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
     <link href="../assets/style.css" type="text/css" rel="Stylesheet" />
 	<script>

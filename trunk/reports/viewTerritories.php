@@ -11,13 +11,8 @@ $_REQUEST = array_merge(array(
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="apple-mobile-web-app-capable" content="yes">
+
     <title><?php echo $_REQUEST['congregation'];?> Territory</title>
-    <script src='http://maps.google.com/maps?file=api&amp;v=2&amp;key=AIzaSyChxunYrmQJGp1binD9ROf5ZEgc-WHmT5M'></script>
-    <script src="../bower_components/jquery/dist/jquery.js"></script>
-    <script src="../bower_components/jquery-ui/ui/jquery-ui.js"></script>
-    <script src="../lib/Map.js"></script>
-    <script src="../bower_components/jquery-ui/ui/i18n/jquery-ui-i18n.js"></script>
-    <link href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
 
     <style type="text/css">
         html, body {
@@ -47,25 +42,38 @@ $_REQUEST = array_merge(array(
             width: 100%;
         }
     </style>
-<?php if (!isset($_REQUEST['debug'])) {?>
-    <style>
-        .olControlAttribution,
-        .olControlZoom,
-        .maximizeDiv,
-        .gmnoprint,
-        .gm-style a {
-            display: none ! important;
-        }
-        .ui-resizable-handle {
-            background-image: none ! important;
-        }
-    </style>
-<?php }?>
-    <script src="../bower_components/OpenLayers/lib/OpenLayers.js"></script>
+	<link href="../bower_components/leaflet/dist/leaflet.css" type="text/css" rel="Stylesheet" />
+	<link href="../bower_components/leaflet.label/dist/leaflet.label.css" type="text/css" rel="Stylesheet" />
+	<link href="../bower_components/leaflet.labeloverlay/leaflet.labelOverlay.css" type="text/css" rel="Stylesheet" />
+
+	<script src="../bower_components/jquery/dist/jquery.js"></script>
+	<script src="../bower_components/leaflet/dist/leaflet-src.js"></script>
+    <script src="../bower_components/poly2tri/dist/poly2tri.js"></script>
+	<script src="../bower_components/leaflet.labeloverlay/leaflet.labelOverlay.js"></script>
+	<script src="../bower_components/togeojson/togeojson.js"></script>
+
     <script>
 	    $(function() {
-		    console.log(new Map($('#map')));
+		    $.when(
+			    $.ajax("../my_files/territory.kml")
+		    ).then(function(mapXml) {
 
+			    var map = L.map('map'),
+				    mapGeoJson = L.geoJson(toGeoJSON.kml(mapXml));
+
+			    map.fitBounds(mapGeoJson.getBounds());
+
+			    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+				    attribution: '&nbsp;'
+			    }).addTo(map);
+
+			    mapGeoJson.eachLayer(function(layer) {
+				    var label = layer.feature.properties.name,
+					    labelOverlay = new L.LabelOverlay(layer, label);
+
+				    map.addLayer(labelOverlay);
+			    }).addTo(map);
+		    });
 	    });
     </script>
 </head>
