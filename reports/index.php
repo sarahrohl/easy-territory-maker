@@ -28,9 +28,11 @@ foreach($etm->all() as $locality) {
 
     //The very first map is of all of the territory
     if ($index == 0) {
-        $overview = "<li id='overview' title='Click for map of all territories' class='ui-button ui-widget territory thin' style='float: right'>
-                    <a href='viewTerritories.php?index=$index' title='$localityName - Overview'><img src='../assets/img/web22.svg' class='territory-icon'></a>
-                </li>";
+        $overview = <<<HTML
+<li id='overview' title='Click for map of all territories' class='ui-button ui-widget territory thin' style='float: right'>
+    <a href='viewTerritories.php?index=$index' title='$localityName - Overview' target='_blank'><img src='../assets/img/web22.svg' class='territory-icon'></a>
+</li>
+HTML;
         $index++;
     }
 
@@ -59,7 +61,7 @@ foreach($etm->all() as $locality) {
 	                }
 
                     $list .= <<<HTML
-<tr onclick="document.location = 'viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded'">
+<tr onclick="window.open('viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded', '_blank', '');">
     <td id='territory$index' class='territory' data-index='$index' >$territoryName</td>
     <td>$localityName</td>
     <td>$statusTemplate</td>
@@ -71,7 +73,7 @@ HTML;
                     if ($territoryAssignmentRecordsTick == 0) {
 	                    $beginningIndex = $index;
 	                    $endIndex = $index + 4;
-                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index&max=$lastTerritoryNumber'>Set " . $beginningIndex . ' to ' . $endIndex . "</a></li>";
+                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index&max=$lastTerritoryNumber' target='_blank'>Set " . $beginningIndex . ' to ' . $endIndex . "</a></li>";
 	                    $territoryAssignmentRecordsIndex++;
 	                    $territoryAssignmentRecordsTick++;
                     }
@@ -94,7 +96,7 @@ HTML;
             //write the standard list of territories
             $list .= "<tr>
                 <td id='territory$index' class='territory' data-index='$index'>
-                    <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index'>$localityName</a>
+                    <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index' target='_blank'>$localityName</a>
                 </td>
                 <td>$status</td>
             </tr>";
@@ -114,7 +116,7 @@ foreach($etm->getPriority() as $territory) {
 	$territoryLocalityEncoded = urlencode($territory->locality);
     $date = date($dateFormat, $territory->in);
     $priority .= <<<HTML
-<tr onclick="document.location = 'viewTerritory.php?territory=$territoryNameEncoded&locality=$territoryLocalityEncoded'">
+<tr onclick="window.open('viewTerritory.php?territory=$territoryNameEncoded&locality=$territoryLocalityEncoded', '_blank', '');">
     <td class='center'>{$territory->territory}</td>
     <td class='center'>$date</td>
 </tr>
@@ -148,13 +150,22 @@ HTML;
 	<title>Territories</title>
     <script src="../bower_components/jquery/dist/jquery.js"></script>
     <script src="../bower_components/jquery-ui/jquery-ui.js"></script>
+
     <link href="../bower_components/jquery-ui/themes/smoothness/jquery-ui.css" type="text/css" rel="Stylesheet" />
     <link href="../assets/style.css" type="text/css" rel="Stylesheet" />
 	<script>
 		$(function() {
+
 			$('.ui-button').button();
 
 			$('#tabs').tabs();
+
+			$('#spreadsheet').mousedown(function(e) {
+				var a = $(this).find('a');
+				window.open(a.attr('href'), '_blank', '');
+				e.stopPropagation();
+				e.preventDefault();
+			});
 		});
 	</script>
 </head>
@@ -165,7 +176,7 @@ HTML;
 			<li><a href="#priority">Need Reworked</a></li>
 			<li><a href="#idealReturnDates">Ideal Return Dates</a></li>
 			<li><a href="#territoryAssignmentRecords">Territory Assignment Records</a></li>
-			<li class="ui-button ui-widget thin" style="float:right;">
+			<li id="spreadsheet" class="ui-button ui-widget thin" style="float:right;">
 				<a href="https://docs.google.com/spreadsheets/d/<?php echo $key; ?>" target="_top"><img src="../assets/img/spreadsheet7.svg" class="territory-icon"></a>
 			</li>
 			<?php echo $overview;?>
