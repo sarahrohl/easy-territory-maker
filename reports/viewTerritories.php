@@ -20,27 +20,13 @@ $_REQUEST = array_merge(array(
             padding: 0;
             margin: 0;
         }
-        .olPopup p {
-            margin:0px;
-            font-size: .9em;
-        }
-        .olPopup h2 {
-            font-size:1.2em;
-        }
-        #cardLabel table, #cardLabel table td {
-            border: 1px solid #C3C3C3;
-            border-collapse: collapse;
-        }
-        #cardLabel table th {
-            border: 1px solid #C3C3C3;
-            text-align: center;
-            font-weight: bold;
-        }
-        h3 {
-            margin: 0px;
-            padding: 0px;
-            width: 100%;
-        }
+		.leaflet-label-overlay {
+			font-size: 30px;
+			box-shadow: 0 0 5px #ffffff;
+			background-color: #ffffff;
+			z-index: 9999;
+			border-radius: 25px;
+		}
     </style>
 	<link href="../bower_components/leaflet/dist/leaflet.css" type="text/css" rel="Stylesheet" />
 	<link href="../bower_components/leaflet.label/dist/leaflet.label.css" type="text/css" rel="Stylesheet" />
