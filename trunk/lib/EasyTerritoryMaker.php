@@ -6,19 +6,29 @@ class EasyTerritoryMaker
 	public $store = array();
 	public $storeByLocality = array();
 	public $storeByName = array();
+	public $dateFormat;
 
 	public $territoryString;
     /**
      * @var SimpleXMLElement
      */
     public $territoryXML;
-    public $territoryActivityString;
-    /**
-     * @var SimpleXMLElement
-     */
-    public $territoryActivityXML;
 
+	/**
+	 * @var SimpleXmlElement
+	 */
+	public $worksheetXml;
     /**
+     * @var array(SimpleXMLElement)
+     */
+    public $territoryActivityXML = [];
+
+	/**
+	 * @var SimpleXMLElement
+	 */
+	public $dncXML;
+
+	/**
      * @var TerritoryCollection[]
      */
     public $territories = array();
@@ -35,6 +45,7 @@ class EasyTerritoryMaker
         //Include types
         require_once('Territory.php');
         require_once('TerritoryCollection.php');
+		require_once('GoogleSpreadsheet.php');
 
 		$dir = dirname(dirname(__FILE__));
 		$kmlFileLocation = $dir . '/my_files/territory.kml';
@@ -54,13 +65,11 @@ class EasyTerritoryMaker
         //get google.spreadsheet.key, a spreadsheet, for use with tracking changes with territory over time
 
         $key = $etm_config->googleSpreadsheetKey;
-        $url = 'https://spreadsheets.google.com/feeds/list/' . $key . '/od6/public/values';
-        $this->territoryActivityString = $territoryActivityString = file_get_contents($url);
-        $territoryActivityXML = simplexml_load_string($territoryActivityString);
-        $territoryActivityXML->registerXPathNamespace('gsx', 'http://schemas.google.com/spreadsheets/2006/extended');
-        $territoryActivityXML->registerXPathNamespace('openSearch', 'http://a9.com/-/spec/opensearchrss/1.0/');
-        $this->territoryActivityXML = $territoryActivityXML;
-		$dateFormat = $etm_config->dateFormat;
+        $worksheetUrl = 'https://spreadsheets.google.com/feeds/worksheets/' . $key . '/public/values';
+		$this->worksheetXml = GoogleSpreadsheet::fromUrl($worksheetUrl);
+		$this->openWorksheet();
+
+		$this->dateFormat = $etm_config->dateFormat;
 
 		//Search through the xml at Document.Folder, or Document.Placemark
 		$this->store = $this->territoryXML->xpath(<<<XPATH
@@ -71,6 +80,14 @@ class EasyTerritoryMaker
 XPATH
 		);
 
+		$this->readKML();
+		$this->readActivity();
+		$this->readDNCs();
+
+	}
+
+	private function readKML()
+	{
 		foreach($this->store as $data) {
 			if (isset($data->Placemark)) {
 				foreach($data->Placemark as $territory) {
@@ -80,24 +97,74 @@ XPATH
 				}
 			}
 		}
+	}
 
-        foreach ($territoryActivityXML->entry as $child) {
-            $row = $child->children('gsx', TRUE);
-            $territoryName = $row->territory . '';
-	        $locality = $this->storeByName[$territoryName]->locality . '';
+	private function openWorksheet() {
+		global $etm_config;
+		$worksheet = $this->worksheetXml;
+		$title = null;
 
-            if (empty($this->territories[$territoryName])) {
-                $this->territories[$territoryName] = new TerritoryCollection();
-            }
+		foreach ($worksheet->entry as $spreadsheetReference) {
+			$title = $spreadsheetReference->title . '';
 
-            $territory = new Territory($row, $locality, $dateFormat);
-            $this->territories[$territoryName]->add($territory);
+			//first is xml list feed
+			$url = $spreadsheetReference->link[0]['href'] . '';
 
-            if (empty($territory->in)) {
-                $this->territories[$territoryName]->out = true;
-                $this->territoriesOut[$territoryName] = $territory;
-            }
-        }
+			if ($title === $etm_config->activityTitle) {
+				$this->territoryActivityXML[] = GoogleSpreadsheet::fromUrl($url);
+			}
+
+			else if ($title === $etm_config->activityArchiveTitle) {
+				$this->territoryActivityXML[] = GoogleSpreadsheet::fromUrl($url);
+			}
+
+			else if ($title === $etm_config->dncTitle) {
+				$this->dncXML = GoogleSpreadsheet::fromUrl($url);
+			}
+		}
+
+	}
+
+	private function readActivity()
+	{
+		$dateFormat = $this->dateFormat;
+		foreach ($this->territoryActivityXML as $xml) {
+			foreach ($xml->entry as $child) {
+				$row = $child->children('gsx', TRUE);
+				$territoryName = $row->territory . '';
+				$locality = $this->storeByName[$territoryName]->locality . '';
+
+				if (empty($this->territories[$territoryName])) {
+					$this->territories[$territoryName] = new TerritoryCollection();
+				}
+
+				$territory = new Territory($row, $locality, $dateFormat);
+				$this->territories[$territoryName]->add($territory);
+
+				if (empty($territory->in)) {
+					$this->territories[$territoryName]->out = true;
+					$this->territoriesOut[$territoryName] = $territory;
+				}
+			}
+		}
+	}
+
+	private function readDNCs()
+	{
+
+		foreach ($this->dncXML->entry as $child) {
+			$row = $child->children('gsx', TRUE);
+
+			$territoryName = $row->territory . '';
+			if (isset($this->territories[$territoryName])) {
+				$this->territories[$territoryName]->dnc[] = array(
+					'address'=>$row->address . '',
+					'name'=>$row->name . '',
+					'date'=>$row->date . '',
+					'territory'=>$row->date . ''
+				);
+			}
+		}
 	}
 
     /**
@@ -315,14 +382,16 @@ XPATH
 
 		//If the above structure doesn't exist, look up folder structure Document / Placemark
 		else {
-			$last = $this->territoryActivityXML->xpath(<<<XPATH
+			foreach($this->territoryActivityXML as $xml) {
+				$last = $xml->xpath(<<<XPATH
 //kml:Document
     /kml:Placemark[last()]
 XPATH
 );
-			if (!empty($last[0])) {
-				$name = $last[0]->name . '';
-				return $name;
+				if (!empty($last[0])) {
+					$name = $last[0]->name . '';
+					return $name;
+				}
 			}
 		}
 

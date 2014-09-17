@@ -13,6 +13,7 @@ class TerritoryCollection {
 	 */
 	public $collection = array();
 	public $out = false;
+	public $dnc = array();
 
     public function add($territory) {
         $this->collection[] = $territory;

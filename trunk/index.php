@@ -1,5 +1,7 @@
 <?php
-
+if (!file_exists('config.php')) {
+	echo "You need to setup your config.php file in the root directory before running this.";
+}
 if (isset($_REQUEST['territory'])) {
     global $security;
     $security = true;
@@ -18,7 +20,7 @@ if (isset($_REQUEST['territory'])) {
 	<form>
         <table>
             <tr>
-                <td>Territory:</td>
+                <td>Territory #:</td>
                 <td><input type="text" name="territory"/></td>
             </tr>
             <tr>
