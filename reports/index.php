@@ -1,5 +1,9 @@
 <?php
 
+if (!file_exists('../config.php')) {
+	echo "You need to setup your config.php file in the root directory before running this.";
+}
+
 require_once("../security.php");
 
 if (!file_exists('../bower_components')) {
