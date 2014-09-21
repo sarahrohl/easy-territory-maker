@@ -1,5 +1,5 @@
 <?php
-require_once("../security.php");
+require_once("security.php");
 
 $_REQUEST = array_merge(array(
     "congregation" => ""
@@ -28,15 +28,15 @@ $_REQUEST = array_merge(array(
 			border-radius: 25px;
 		}
     </style>
-	<link href="../bower_components/leaflet/dist/leaflet.css" type="text/css" rel="Stylesheet" />
-	<link href="../bower_components/leaflet.label/dist/leaflet.label.css" type="text/css" rel="Stylesheet" />
-	<link href="../bower_components/leaflet.labeloverlay/leaflet.labelOverlay.css" type="text/css" rel="Stylesheet" />
+	<link href="bower_components/leaflet/dist/leaflet.css" type="text/css" rel="Stylesheet" />
+	<link href="bower_components/leaflet.label/dist/leaflet.label.css" type="text/css" rel="Stylesheet" />
+	<link href="bower_components/leaflet.labeloverlay/leaflet.labelOverlay.css" type="text/css" rel="Stylesheet" />
 
-	<script src="../bower_components/jquery/dist/jquery.js"></script>
-	<script src="../bower_components/leaflet/dist/leaflet-src.js"></script>
-    <script src="../bower_components/poly2tri/dist/poly2tri.js"></script>
-	<script src="../bower_components/leaflet.labeloverlay/leaflet.labelOverlay.js"></script>
-	<script src="../bower_components/togeojson/togeojson.js"></script>
+	<script src="bower_components/jquery/dist/jquery.js"></script>
+	<script src="bower_components/leaflet/dist/leaflet-src.js"></script>
+    <script src="bower_components/poly2tri/dist/poly2tri.js"></script>
+	<script src="bower_components/leaflet.labeloverlay/leaflet.labelOverlay.js"></script>
+	<script src="bower_components/togeojson/togeojson.js"></script>
 
     <script>
 	    function inIframe () {
@@ -53,7 +53,7 @@ $_REQUEST = array_merge(array(
 				    });
 		    }
 		    $.when(
-			    $.ajax("../my_files/territory.kml")
+			    $.ajax("my_files/territory.kml")
 		    ).then(function(mapXml) {
 
 			    var map = L.map('map'),

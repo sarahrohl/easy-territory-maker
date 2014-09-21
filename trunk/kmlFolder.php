@@ -17,7 +17,7 @@ $_REQUEST = array_merge(array(
 ), $_REQUEST);
 
 //include and instantiate EasyTerritoryMaker
-include_once('../lib/EasyTerritoryMaker.php');
+include_once('lib/EasyTerritoryMaker.php');
 $etm = new EasyTerritoryMaker();
 
 //setup default colors
