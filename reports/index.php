@@ -34,7 +34,7 @@ foreach($etm->all() as $locality) {
     if ($index == 0) {
         $overview = <<<HTML
 <li id='overview' title='Click for map of all territories' class='ui-button ui-widget territory thin' style='float: right'>
-    <a href='viewTerritories.php?index=$index' title='$localityName - Overview' target='_blank'><img src='../assets/img/web22.svg' class='territory-icon'></a>
+    <a href='../viewTerritories.php?index=$index' title='$localityName - Overview' target='_blank'><img src='../assets/img/web22.svg' class='territory-icon'></a>
 </li>
 HTML;
         $index++;
@@ -65,7 +65,7 @@ HTML;
 	                }
 
                     $list .= <<<HTML
-<tr onclick="window.open('viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded', '_blank', '');">
+<tr onclick="window.open('../viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded', '_blank', '');">
     <td id='territory$index' class='territory' data-index='$index' >$territoryName</td>
     <td>$localityName</td>
     <td>$statusTemplate</td>
@@ -77,7 +77,7 @@ HTML;
                     if ($territoryAssignmentRecordsTick == 0) {
 	                    $beginningIndex = $index;
 	                    $endIndex = $index + 4;
-                        $territoryAssignmentRecords .= "<li><a href='viewTerritoryAssignmentRecords.php?at=$index&max=$lastTerritoryNumber' target='_blank'>Set " . $beginningIndex . ' to ' . $endIndex . "</a></li>";
+                        $territoryAssignmentRecords .= "<li><a href='../viewTerritoryAssignmentRecords.php?at=$index&max=$lastTerritoryNumber' target='_blank'>Set " . $beginningIndex . ' to ' . $endIndex . "</a></li>";
 	                    $territoryAssignmentRecordsIndex++;
 	                    $territoryAssignmentRecordsTick++;
                     }
@@ -100,7 +100,7 @@ HTML;
             //write the standard list of territories
             $list .= "<tr>
                 <td id='territory$index' class='territory' data-index='$index'>
-                    <a href='viewTerritory.php?territory=$localityNameEncoded&index=$index' target='_blank'>$localityName</a>
+                    <a href='../viewTerritory.php?territory=$localityNameEncoded&index=$index' target='_blank'>$localityName</a>
                 </td>
                 <td>$status</td>
             </tr>";
@@ -120,7 +120,7 @@ foreach($etm->getPriority() as $territory) {
 	$territoryLocalityEncoded = urlencode($territory->locality);
     $date = date($dateFormat, $territory->in);
     $priority .= <<<HTML
-<tr onclick="window.open('viewTerritory.php?territory=$territoryNameEncoded&locality=$territoryLocalityEncoded', '_blank', '');">
+<tr onclick="window.open('../viewTerritory.php?territory=$territoryNameEncoded&locality=$territoryLocalityEncoded', '_blank', '');">
     <td class='center'>{$territory->territory}</td>
     <td class='center'>$date</td>
 </tr>
@@ -137,7 +137,7 @@ foreach($etm->getIdealReturnDates() as $territory) {
 
     $idealReturnDates .= <<<HTML
 
-<tr onclick='document.location = "viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded";'>
+<tr onclick='document.location = "../viewTerritory.php?territory=$territoryNameEncoded&locality=$localityNameEncoded";'>
     <td>{$territory->publisher}</td>
     <td>{$territory->territory}</td>
     <td>{$territory->locality}</td>

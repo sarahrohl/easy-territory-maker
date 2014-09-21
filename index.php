@@ -5,7 +5,7 @@ if (!file_exists('config.php')) {
 if (isset($_REQUEST['territory'])) {
     global $security;
     $security = true;
-	require_once('reports/viewTerritory.php');
+	require_once('viewTerritory.php');
 	exit;
 }
 ?><!DOCTYPE html>

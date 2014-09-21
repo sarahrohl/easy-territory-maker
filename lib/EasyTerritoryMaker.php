@@ -52,7 +52,7 @@ class EasyTerritoryMaker
 
         //Throw helpful error if territory.kml doesn't exist
         if (!file_exists($kmlFileLocation)) {
-            throw new Exception("The 'territory.kml' file, created with Google Earth, does not exist in the 'my_files' folder.  Please save it there, and continue.");
+            //throw new Exception("The 'territory.kml' file, created with Google Earth, does not exist in the 'my_files' folder.  Please save it there, and continue.");
         }
 
         //get territory.kml file, and read it to xml, and setup kml namespace
