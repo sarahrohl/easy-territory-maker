@@ -34,7 +34,7 @@ foreach($etm->all() as $locality) {
     if ($index == 0) {
         $overview = <<<HTML
 <li id='overview' title='Click for map of all territories' class='ui-button ui-widget territory thin' style='float: right'>
-    <a href='../viewTerritories.php?index=$index' title='$localityName - Overview' target='_blank'><img src='../assets/img/web22.svg' class='territory-icon'></a>
+    <a href='../viewTerritories.php?reports' title='$localityName - Overview' target='_blank'><img src='../assets/img/web22.svg' class='territory-icon'></a>
 </li>
 HTML;
         $index++;
