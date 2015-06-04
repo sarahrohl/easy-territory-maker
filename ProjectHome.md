@@ -1,0 +1,1 @@
+A project designed to make google maps + google earth + openlayers + kml, easy to make printable territories with.  Make territory in Google Earth or Google Maps, get kml, open in easy-territory-maker, and print.  Easy!
